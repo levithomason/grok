@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+#
+# Used to curl grokfiles.
+#
+
+###############################################################################
+# DEFINE INSTALL FUNCTIONS
+#
+grok_dir="$HOME/.grokfiles"
+
+install_grokfiles() {
+  echo ""
+  echo "... cloning grokfiles"
+  echo ""
+  git clone git@github.com:levithomason/grokfiles.git $grok_dir
+
+  echo ""
+  echo "... bootstraping grokfiles"
+  echo ""
+  cd $grok_dir
+  bash bootstrap
+}
+
+confirm_overwrite() {
+  echo ""
+  echo "  Overwrite ~/.grokfiles with the latest repo version? (y/N) ";
+  read -n 1 REPLY
+
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    rm -rf $grok_dir                  # remove existing
+    install_grokfiles                 # install
+  else
+    echo ""
+    echo "  Bailing out!"
+    echo ""
+  fi;
+}
+
+###############################################################################
+# INSTALL
+#
+
+echo "... checking for ~/.grokfiles in:" $grok_dir
+
+if [ -d "$grok_dir" ]; then
+  echo "... found .grokfiles"
+  confirm_overwrite
+else
+  echo "... no existing .grokfiles found"
+  install_grokfiles
+fi
+
+unset grok_dir

@@ -1,0 +1,2 @@
+topics/private/**/*
+!topics/private/README.md

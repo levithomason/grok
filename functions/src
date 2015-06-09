@@ -1,0 +1,46 @@
+# Project Change Directory
+# Changes directory to a folder in ~/$DOTFILES_PROJECTS/*
+#
+# Matches project folders starting with arg
+# Changes to project if 1 match
+# Lists projects if > 1 match
+
+src_counter=1
+src_projects=()
+  
+for project in $DOTFILES_PROJECTS/*$1*; do
+  # get folder name
+  src_basename=$(basename $project)
+
+  # add folder to array
+  src_projects[$src_counter]=$src_basename
+
+  # print array index and folder name
+  echo "$src_counter: $src_basename"
+
+  # increment counter
+  src_counter=$((src_counter+1))
+done;
+  
+# set project name if only 1 match
+# else, prompt for array index from above echoed list
+if (( ${#src_projects[@]} == 1 )) then
+  src_project_name=$src_projects[1]
+else
+  echo ""
+  read "src_choice?# "
+  src_project_name=$src_projects[$src_choice]
+fi
+  
+# change directory if a valid array item was selected
+if [[ $src_project_name != "" ]] then
+  cd ~/src/$src_project_name/
+else
+  src $1
+fi
+  
+unset src_counter
+unset src_projects
+unset src_basename
+unset src_choice
+unset src_project_name

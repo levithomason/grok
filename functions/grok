@@ -1,0 +1,18 @@
+###############################################################################
+# DOTFILES
+#
+# Run this function to 'reset & update' your setup.
+#
+
+#
+# Pull latest changes
+#
+
+. $DOTFILES_LIB/pull_latest_grokfiles.zsh
+
+#
+# Run Dotfiles
+#
+
+. $DOTFILES_LIB/run_topic_installs.zsh
+. $DOTFILES_LIB/run_topic_zsh_files.zsh
