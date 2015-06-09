@@ -39,7 +39,8 @@ brew install \
 echo "... installing cli tools"
 
 brew install \
- nodenv
+  git \
+  nodenv
 
 echo "... installing desktop apps"
 

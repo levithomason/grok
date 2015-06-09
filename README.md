@@ -5,7 +5,7 @@ Grokfiles keeps your dotfiles, OSX settings, and your desktop apps in git.
 ```bash
 bash <(curl -fsSL https://raw.github.com/levithomason/grokfiles/master/install)
 ```
->Clone to ~/.grokfiles and run bootstrap.
+lone to ~/.grokfiles and run bootstrap.
 
 Run **grok** to sync your:
 - osx settings
