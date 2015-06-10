@@ -1,20 +1,71 @@
-# Grokfiles
+Grokfiles
+=========
 
-Grokfiles keeps your dotfiles, OSX settings, and your desktop apps in git.
+## BigFatWarning™
+
+*This repo is specialized for my machine. I plan to release a generic version
+for everyone, soon.*
+
+Grokfiles provisions and syncs your dev environment.
 
 ```bash
 bash <(curl -fsSL https://raw.github.com/levithomason/grokfiles/master/install)
 ```
-lone to ~/.grokfiles and run bootstrap.
+>  OSX Settings     Desktop Apps      CLI Tools     dotfiles      Custom Modules
 
-Run **grok** to sync your:
-- osx settings
-- desktop apps
-- command lind tools
-- dotfiles
+## Quick Start
 
-## ~/.grokfiles
+**Provision** a new Mac:  
+Run the bash curl script above or clone and run `bash ./bootstrap`. 
 
+**Reset/Update** one of your Macs:  
+Run `grok` after bootstrapping.
+
+## Why Grok?
+
+Grok is a branded [dotfiles](https://dotfiles.github.io/) setup.  I started
+following [Steven Skoczen](https://github.com/skoczen/dotfiles) and forking
+[Paul Miller](https://github.com/paulmillr/dotfiles).  After comparing the 
+[other greats](https://dotfiles.github.io/) and switching to zsh, I forked
+[Zach Holman's](http://github.com/ryanb) dotfiles.  Zach's rig really impressed
+me and I credit mostly his work. I then setup [boxen](https://boxen.github.com)
+to provision an entire rig.
+
+Eventually, I wanted something for my machines, something easy to understand.
+Something I could **grok**.
+
+## Features
+Here are some of the things grok does.  Better docs will happen.
+
+### OSX Settings
+
+See `/topic/osx`
+
+### Desktop Apps
+
+See `/topic/homebrew`.
+
+### CLI Tools
+
+See `/topic/homebrew`.
+
+### dotfiles
+
+See `/bootstrap/` for initial setup and symlinking of your `~/.*` files.  
+See `/topic/zsh/zshrc.symlink` for what happens when your shell starts.
+
+### ...custom scripts
+
+I needed to sync WebStorm settings, all of them, and the plugin didn't work.
+After reading the JetBrains
+[docs](https://www.jetbrains.com/webstorm/help/project-and-ide-settings.html#d552893e149) 
+on settings, it's pretty easy.
+
+See `/topics/webstorm/` for how I sync them with DropBox.
+
+## Learn More
+
+### ~/.grokfiles
 Everything lives here.  You're original `~/.*` files are symlinked here, too.
 
 The main file you'll want to change right off the bat is `zsh/zshrc.symlink`,
@@ -25,7 +76,7 @@ defaults, and so on. Tweak this script, and occasionally run `dot` from
 time to time to keep your environment fresh and up-to-date. You can find
 this script in `bin/`.
 
-## Topics
+### Topics
 
 Dotfiles organizes dotfiles by topic. Think of a topic as a domain.
 
@@ -61,39 +112,37 @@ but still keep those autoloaded files in your home directory.
 
 This only happens when running `/bootstrap`. 
 
-### Adding topics
+#### Adding topics
 If you're adding a new area to your dotfiles — like, "Java" — simply add a 
 `java` directory to `/topics` and put files in it as described above.
 
-## Structure
-
-### /bin
+### ~/.grokfiles/bin
 
 Anything in `/bin` will be made available on your `$PATH`.
 
-### /functions
+### ~/.grokfiles/functions
 
 Functions and their respective completions (files starting with `_`) live here.
 All functions will be made available in your shell.
 
 Take a look at the a couple for an example.
 
+### ~/.grokfiles/lib
+
+This is everything grok needs to run.  Scripts that are needed throughout grok
+are placed here. It'd be a good idea to understand what these are doing.
+
 ## Road Map
-- refactor naming to grokfiles
-- grokfiles cli
+- better organized docs!
+- change topics to modules and give quick start:
+    - how they work
+    - creating a module
+- consistent logging, replace all `GROK:` logs.
+- formalize a `grok` sync folder with prompt for Google Drive / DropBox
+- refactor naming to grok
+- flatten structure for easy of understanding, prefix non-module folders `_`
+- grok cli
   - ~~update (pull changes, run)~~
   - search/install/uninstall desktop app (alias brew cask, record changes)
   - edit (open project in $EDITOR, replace system alias `odot`)
 - convert scripts to zsh
-
-## Imitating Greats
-
-I got my dotfiles start following
-[Steven Skoczen](https://github.com/skoczen/dotfiles) and forking
-[Paul Miller](https://github.com/paulmillr/dotfiles).  After comparing the 
-[other greats](https://dotfiles.github.io/) and switching to zsh, I forked
-[Zach Holman's](http://github.com/ryanb) dotfiles.  Zach's rig really impressed
-me and I credit mostly his work.  Eventually, I wanted something light and 
-specific.
-
-These are my dotfiles, heavily inspired (and copied) from theirs.

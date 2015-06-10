@@ -1,88 +1,112 @@
 #!/usr/local/bin/env bash
-
-##############################################################################
+#
 # SYMLINK SETTINGS
 #
-# Symlinks WebStorm plugins and settings into DropBox
-# https://www.jetbrains.com/webstorm/help/project-and-ide-settings.html
+# https://www.jetbrains.com/ws/help/project-and-ide-settings.html
 #
+# This script symlinks local WebStorm settings to DropBox. If DropBox is not
+# found, the script exists.  If DropBox is found, but the settings to symlink
+# are not, you'll be prompted to backup, upload, and and link your current
+# WebStorm directories to DropBox.  Future machines will link to the newly
+# created DropBox settings.
+#
+
 
 ##############################################################################
 # DEFINE FUNCTIONS
 #
-dropbox_dir=~/Dropbox
-dropbox_webstorm_dir=$dropbox_dir/JetBrains/WebStorm
 
-webstorm_plugins_dirs=(~/Library/Preferences/WebStorm*)
-webstorm_settings_dirs=(~/Library/Application\ Support/WebStorm*)
+db_dir=~/Dropbox
+db_grok_dir=$db_dir/grok
+db_ws_plugins_dir=$db_grok_dir/webstorm/plugins
+db_ws_settings_dir=$db_grok_dir/webstorm/settings
+
+# array of all WebStorm* directories, prune children
+# ignore *.backup directories, previously created by the script 
+ws_plugins_dirs=$(find -L ~/Library/Preferences/WebStorm* -type d -prune -not -name *.backup)
+ws_settings_dirs=$(find -L ~/Library/Application\ Support/WebStorm* -type d -prune -not -name *.backup)
 
 #
 # Link
 #
-link_and_remove_dir() {
-  src=$2
-  dst="$1";
 
-  echo ""
-  echo "... backing up "$dst""
-  mv "$dst" "${dst/WebStorm/ws}".backup
+backup_and_link() {
+  local db="$1";
+  local ws="$2";
+  local ws_ver="$(basename "$ws")";
 
-  echo "... removing "$dst""
-  rm -rf "$dst"
+  # get either plugins/settings folder name from dropbox path
+  #   .../grok/WebStorm/plugins/WebStormX == plugins
+  #   .../grok/WebStorm/settings/WebStormX == settings
+  local type="$(basename $(dirname "$db"))";
 
-  echo "... symlinking "$src" to "$dst""
-  ln -s "$src" "$dst"
+  local ws_dest="$(readlink "$ws")"       # check if ws_src is already a link
+
+  if [ "$ws_dest" == "$db" ]; then        # skip if already linked to dropbox
+    echo "... "$ws_ver" "$type" already linked"
+  else                                    # ws_src not already linked
+    echo "... backing up:"
+    echo "      "$ws""
+    echo "      "$ws".backup"
+    mv "$ws" "$ws.backup"                 # back up ws_src
+
+    echo "... symlinking:"
+    echo "      "$db""
+    echo "      "$ws""
+    ln -s "$db" "$ws"                     # link from dropbox to ws_src
+  fi
 }
 
-symlink_dropbox_to_webstorm() {
-  echo "... symlinking"
-
+symlink_db_to_ws() {
   # plugins
-  echo "...    plugins"
-  for dir in "${webstorm_plugins_dirs[@]}"; do
-    echo "...      - $(basename "$dir")"
-    link_and_remove_dir "$dir" "$dropbox_webstorm_dir/$(basename "$dir")"/plugins
+  for ws_dir in "${ws_plugins_dirs[@]}"; do
+    ws_version=$(basename "$ws_dir");
+    db_dir="$db_ws_plugins_dir/$ws_version"
+
+    backup_and_link "$db_dir" "$ws_dir"
   done
 
   # all other settings
-  echo "...    settings"
-  for dir in "${webstorm_settings_dirs[@]}"; do
-    echo "...      - $(basename "$dir")"
-    link_and_remove_dir "$dir" "$dropbox_webstorm_dir/$(basename "$dir")"/settings
+  for ws_dir in "${ws_settings_dirs[@]}"; do
+    ws_version=$(basename "$ws_dir");
+    db_dir="$db_ws_settings_dir/$ws_version"
+
+    backup_and_link "$db_dir" "$ws_dir"
   done
 }
 
-prompt_copy_current_to_dropbox() {
+#
+# Prompt to create
+#
+
+prompt_create_upload_current_to_db() {
   echo ""
-  echo "   Found:   "$dropbox_dir""
-  echo "   Missing: "$dropbox_webstorm_dir""
-  echo ""
-  read -p "   Create missing dir and upload current settings? [y/N] " -n 1 action
+  read -p "   Create missing dir and upload current settings? [y/N] " -n 1 SHOULD_CREATE
   echo ""
 
-  if [[ $action =~ ^[Yy]$ ]]; then
+  if [[ $SHOULD_CREATE =~ ^[Yy]$ ]]; then
     echo ""
 
-    # directory
-    echo "...   creating directory"
-    mkdir -p "$dropbox_webstorm_dir"                # create DropBox directory 
+    echo "...  create plugins dir"
+    mkdir -p "$db_ws_plugins_dir"             # create DropBox plugins dir 
 
-    # plugins
-    echo "...   copying plugins"
-    for dir in "${webstorm_plugins_dirs[@]}"; do    # loop array, accounts for spaces
-      cp -r "$dir" "$dropbox_webstorm_dir"/plugins
-    done
-  
-    # settings
-    echo "...   copying settings"
-    for dir in "${webstorm_settings_dirs[@]}"; do   # loop array, accounts for spaces
-      cp -r "$dir" "$dropbox_webstorm_dir"/settings
+    echo "...  create settings dir"
+    mkdir -p "$db_ws_settings_dir"            # create DropBox settings dir 
+
+    echo "...  upload plugins"
+    for dir in "${ws_plugins_dirs[@]}"; do    # upload plugins to DropBox
+      cp -r "$dir" "$db_ws_plugins_dir"
     done
 
-    symlink_dropbox_to_webstorm
+    echo "...  upload settings"
+    for dir in "${ws_settings_dirs[@]}"; do   # upload settings to DropBox
+      cp -r "$dir" "$db_ws_settings_dir"
+    done
+
+    symlink_db_to_ws                          # symlink DropBox to local
   else
     echo ""
-    echo "... skipped WebStorm symlink"
+    echo "... skipping, WebStorm symlink"
     echo ""
   fi
 }
@@ -91,14 +115,19 @@ prompt_copy_current_to_dropbox() {
 # SYMLINK FILES
 #
 
-if [ ! -d $dropbox_dir ]
-then
-  echo "... Cannot find "$dropbox_dir""
+# no dropbox, exit
+if [ ! -d $db_dir ]; then
+  echo "... skipping, cannot find "$db_dir""
 else
-  if [ ! -d $dropbox_webstorm_dir ] 
-  then
-    prompt_copy_current_to_dropbox
+  if [ ! -d $db_ws_plugins_dir ] && [ ! -d $db_ws_settings_dir ]; then
+    echo "... missing plugins/settings directories:"
+    echo "      "$db_ws_plugins_dir""
+    echo "      "$db_ws_settings_dir""
+
+    prompt_create_upload_current_to_db
   else
-    symlink_dropbox_to_webstorm
+    echo "... found DropBox plugins/settings"
+
+    symlink_db_to_ws
   fi
 fi

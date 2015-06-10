@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-echo '...DOTFILES: run_topic_installs'
+echo 'GROK: run_topic_installs'
 
 ###############################################################################
 # DEFINE INSTALL FUNCTIONS

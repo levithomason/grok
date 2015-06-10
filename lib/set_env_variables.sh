@@ -5,7 +5,7 @@
 #
 # These are private values used internally, best to leave them as is.
 
-echo '...DOTFILES: set_env_variables'
+echo 'GROK: set_env_variables'
 
 export DOTFILES_ROOT=$HOME/.grokfiles
 export DOTFILES_TOPICS=$DOTFILES_ROOT/topics
