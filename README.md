@@ -6,7 +6,7 @@ Grokfiles provisions and syncs your dev environment.
 ```bash
 bash <(curl -fsSL https://raw.github.com/levithomason/grokfiles/master/install)
 ```
->---OSX Settings-----Desktop Apps-----CLI Tools-----dotfiles-----Custom Modules---
+>....OSX Settings.......Desktop Apps.......CLI Tools.......dotfiles.......Custom Modules....
 
 ## BigFatWarning™
 
