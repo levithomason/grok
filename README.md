@@ -18,7 +18,7 @@ only I know how to use.
 
 ## Quick Start
 
-**Provision** a new Mac:  
+**Bootstrap** a new Mac:  
 Run the bash curl script above or clone and run `bash ./bootstrap`. 
 
 **Reset/Update** one of your Macs:  
