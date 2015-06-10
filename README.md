@@ -1,7 +1,7 @@
 Grok
 ====
 
-Grok makes it easy to develop on multiple macs (home, work, laptop, etc).
+Grok makes it easy to develop from multiple Macs (home, work, laptop, etc).
 
 ```bash
 bash <(curl -fsSL https://raw.github.com/levithomason/grok/master/install)
