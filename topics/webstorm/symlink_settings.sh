@@ -20,7 +20,7 @@ webstorm_settings_dirs=(~/Library/Application\ Support/WebStorm*)
 # Link
 #
 link_and_remove_dir() {
-  src="$dropbox_webstorm_dir/$(basename "$dir")"
+  src=$2
   dst="$1";
 
   echo ""
@@ -41,14 +41,14 @@ symlink_dropbox_to_webstorm() {
   echo "...    plugins"
   for dir in "${webstorm_plugins_dirs[@]}"; do
     echo "...      - $(basename "$dir")"
-    link_and_remove_dir "$dir"  
+    link_and_remove_dir "$dir" "$dropbox_webstorm_dir/$(basename "$dir")"/plugins
   done
 
   # all other settings
   echo "...    settings"
   for dir in "${webstorm_settings_dirs[@]}"; do
     echo "...      - $(basename "$dir")"
-    link_and_remove_dir "$dir"
+    link_and_remove_dir "$dir" "$dropbox_webstorm_dir/$(basename "$dir")"/settings
   done
 }
 
