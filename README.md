@@ -1,17 +1,17 @@
 Grokfiles
 =========
 
-## BigFatWarning™
-
-*This repo is specialized for my machine. I plan to release a generic version
-for everyone, soon.*
-
 Grokfiles provisions and syncs your dev environment.
 
 ```bash
 bash <(curl -fsSL https://raw.github.com/levithomason/grokfiles/master/install)
 ```
->  OSX Settings     Desktop Apps      CLI Tools     dotfiles      Custom Modules
+>---OSX Settings-----Desktop Apps-----CLI Tools-----dotfiles-----Custom Modules---
+
+## BigFatWarning™
+
+*This repo is specialized for my machine. I plan to release a generic version
+for everyone, soon.*
 
 ## Quick Start
 
@@ -29,10 +29,9 @@ following [Steven Skoczen](https://github.com/skoczen/dotfiles) and forking
 [other greats](https://dotfiles.github.io/) and switching to zsh, I forked
 [Zach Holman's](http://github.com/ryanb) dotfiles.  Zach's rig really impressed
 me and I credit mostly his work. I then setup [boxen](https://boxen.github.com)
-to provision an entire rig.
+to provision an entire rig.  This went on a few years.
 
-Eventually, I wanted something for my machines, something easy to understand.
-Something I could **grok**.
+Then, I wanted something for me, easy to understand, something I could **grok**.
 
 ## Features
 Here are some of the things grok does.  Better docs will happen.
