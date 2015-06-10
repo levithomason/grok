@@ -24,8 +24,8 @@ install_grokfiles() {
 
 confirm_overwrite() {
   echo ""
-  echo "  Overwrite ~/.grokfiles with the latest repo version? (y/N) ";
-  read -n 1 REPLY
+  read -p "  Overwrite ~/.grokfiles with the latest repo version? (y/N) " -n 1 REPLY
+  echo ""
 
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     rm -rf $grok_dir                  # remove existing
