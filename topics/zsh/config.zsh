@@ -13,10 +13,10 @@ export CLICOLOR=true
 # http://zsh.sourceforge.net/Doc/Release/Functions.html
 
 # add dotfiles functions
-fpath=($DOTFILES_FUNCTIONS $fpath)
+fpath=($GROK_FUNCTIONS $fpath)
 
 # add topic folders to define functions and completions in topic folders
-for topic_folder ($DOTFILES_TOPICS/*); do
+for topic_folder ($GROK_TOPICS/*); do
   if [ -d $topic_folder ]; then
     fpath=($topic_folder $fpath);
   fi;
@@ -26,7 +26,7 @@ done
 autoload -U compinit
 compinit
 
-autoload -U $DOTFILES_FUNCTIONS/*(:t)
+autoload -U $GROK_FUNCTIONS/*(:t)
 
 HISTFILE=~/.zsh_history
 HISTSIZE=10000

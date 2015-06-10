@@ -20,7 +20,7 @@ log_header() {
 #
 
 # find the installers and run them iteratively
-for installer in $(find $DOTFILES_TOPICS -name install.sh); do
+for installer in $(find $GROK_TOPICS -name install.sh); do
   log_header $(basename ${installer/\/install.sh});
   source $installer;
 done

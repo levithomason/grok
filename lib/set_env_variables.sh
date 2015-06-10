@@ -1,17 +1,17 @@
 #!/bin/sh
 
 ###############################################################################
-# DOTFILES
+# GROK
 #
 # These are private values used internally, best to leave them as is.
 
 echo 'GROK: set_env_variables'
 
-export DOTFILES_ROOT=$HOME/.grokfiles
-export DOTFILES_TOPICS=$DOTFILES_ROOT/topics
-export DOTFILES_BIN=$DOTFILES_ROOT/bin
-export DOTFILES_FUNCTIONS=$DOTFILES_ROOT/functions
-export DOTFILES_LIB=$DOTFILES_ROOT/lib
+export GROK_ROOT=$HOME/.grokfiles
+export GROK_TOPICS=$GROK_ROOT/topics
+export GROK_BIN=$GROK_ROOT/bin
+export GROK_FUNCTIONS=$GROK_ROOT/functions
+export GROK_LIB=$GROK_ROOT/lib
 
 
 ###############################################################################
@@ -19,4 +19,4 @@ export DOTFILES_LIB=$DOTFILES_ROOT/lib
 #
 # Configure these to your liking
 
-export DOTFILES_PROJECTS=~/src
+export GROK_PROJECTS=~/src

@@ -1,1 +1,1 @@
-source $DOTFILES_TOPICS/terminal/set_theme.sh
+source $GROK_TOPICS/terminal/set_theme.sh

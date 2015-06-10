@@ -5,7 +5,7 @@
         email = me@levithomason.com
 [alias]
         co = checkout
-        promote = !$DOTFILES_BIN/git-promote
+        promote = !$GROK_BIN/git-promote
         count   = !git shortlog -sn
 [color]
         diff = auto

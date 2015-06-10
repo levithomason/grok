@@ -1,2 +1,2 @@
 #compdef src
-_files -W $DOTFILES_PROJECTS -/
+_files -W $GROK_PROJECTS -/

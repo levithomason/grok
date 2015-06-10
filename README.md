@@ -1,10 +1,10 @@
-Grokfiles
-=========
+Grok
+====
 
-Grokfiles provisions and syncs your dev environment.
+Grok makes it easy to develop on multiple macs (home, work, laptop, etc).
 
 ```bash
-bash <(curl -fsSL https://raw.github.com/levithomason/grokfiles/master/install)
+bash <(curl -fsSL https://raw.github.com/levithomason/grok/master/install)
 ```
 
 ## BigFatWarning™
@@ -12,19 +12,19 @@ bash <(curl -fsSL https://raw.github.com/levithomason/grokfiles/master/install)
 *This repo is specialized for my machine. I plan to release a generic version
 for everyone, soon.*
 
-It will configure your osx settings, desktop apps, cli tools, dotfiles, run 
+Grok will configure your osx settings, desktop apps, cli tools, dotfiles, run 
 custom scripts, and make you hate me for turning your machine into something
 only I know how to use.
 
 ## Quick Start
 
-**Install:**
+**Install**  
 Run the bash curl script above or clone and run `bash ./bootstrap`. 
 
-**Modify:**
+**Modify**  
 *Hack* on `~/.grokfiles`.  *Run* `grok` to execute changes. *Push when you're happy. 
 
-**Update:**  
+**Update**  
 Run `grok` at anytime to pull the latest changes and configure your machine.
 
 ## Why Grok?
@@ -138,13 +138,14 @@ This is everything grok needs to run.  Scripts that are needed throughout grok
 are placed here. It'd be a good idea to understand what these are doing.
 
 ## Road Map
+- break out osx settings and use some.
 - better organized docs!
 - change topics to modules and give quick start:
     - how they work
     - creating a module
 - consistent logging, replace all `GROK:` logs.
 - formalize a `grok` sync folder with prompt for Google Drive / DropBox
-- refactor naming to grok
+- finish refactor naming to grok
 - flatten structure for easy of understanding, prefix non-module folders `_`
 - grok cli
   - ~~update (pull changes, run)~~

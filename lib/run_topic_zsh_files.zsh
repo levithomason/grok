@@ -14,7 +14,7 @@ echo 'GROK: run_topic_zsh_files'
 #
 
 typeset -U config_files
-config_files=($DOTFILES_TOPICS/**/*.zsh)
+config_files=($GROK_TOPICS/**/*.zsh)
 
 
 #

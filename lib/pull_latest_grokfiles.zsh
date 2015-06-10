@@ -2,7 +2,7 @@ echo "... pull latest grokfiles"
 
 grok_old_pwd=$(pwd)
 
-cd $DOTFILES_ROOT
+cd $GROK_ROOT
 git pull
 cd $grok_old_pwd
 

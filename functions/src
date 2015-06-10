@@ -1,5 +1,5 @@
 # Project Change Directory
-# Changes directory to a folder in ~/$DOTFILES_PROJECTS/*
+# Changes directory to a folder in ~/$GROK_PROJECTS/*
 #
 # Matches project folders starting with arg
 # Changes to project if 1 match
@@ -8,7 +8,7 @@
 src_counter=1
 src_projects=()
   
-for project in $DOTFILES_PROJECTS/*$1*; do
+for project in $GROK_PROJECTS/*$1*; do
   # get folder name
   src_basename=$(basename $project)
 

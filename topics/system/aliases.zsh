@@ -10,7 +10,7 @@ then
   alias la="gls -A --color"
 fi
 
-alias odot="$EDITOR $DOTFILES_ROOT"
+alias odot="$EDITOR $GROK_ROOT"
 alias "cd.."="cd .."
 alias ".."="cd .."
 alias ws="wstorm"
