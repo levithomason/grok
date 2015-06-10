@@ -18,11 +18,14 @@ only I know how to use.
 
 ## Quick Start
 
-**Bootstrap** a new Mac:  
+**Install:**
 Run the bash curl script above or clone and run `bash ./bootstrap`. 
 
-**Reset/Update** one of your Macs:  
-Run `grok` after bootstrapping.
+**Modify:**
+*Hack* on `~/.grokfiles`.  *Run* `grok` to execute changes. *Push when you're happy. 
+
+**Update:**  
+Run `grok` at anytime to pull the latest changes and configure your machine.
 
 ## Why Grok?
 
