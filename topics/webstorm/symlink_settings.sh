@@ -70,13 +70,13 @@ prompt_copy_current_to_dropbox() {
     # plugins
     echo "...   copying plugins"
     for dir in "${webstorm_plugins_dirs[@]}"; do    # loop array, accounts for spaces
-      cp -r "$dir" "$dropbox_webstorm_dir"
+      cp -r "$dir" "$dropbox_webstorm_dir"/plugins
     done
   
     # settings
     echo "...   copying settings"
     for dir in "${webstorm_settings_dirs[@]}"; do   # loop array, accounts for spaces
-      cp -r "$dir" "$dropbox_webstorm_dir"
+      cp -r "$dir" "$dropbox_webstorm_dir"/settings
     done
 
     symlink_dropbox_to_webstorm
