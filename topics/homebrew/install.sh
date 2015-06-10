@@ -52,7 +52,8 @@ brew cask install \
   google-drive \
   java \
   quicksilver \
-  webstorm
+  webstorm \
+  spectacle
 
 
 ###############################################################################
