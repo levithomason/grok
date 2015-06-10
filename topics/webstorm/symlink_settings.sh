@@ -83,31 +83,25 @@ prompt_create_upload_current_to_db() {
   echo ""
   read -p "   Create missing dir and upload current settings? [y/N] " -n 1 SHOULD_CREATE
   echo ""
+  echo ""
 
   if [[ $SHOULD_CREATE =~ ^[Yy]$ ]]; then
-    echo ""
+    echo "...  create DropBox plugins/settings directories"
+    mkdir -p "$db_ws_plugins_dir" 
+    mkdir -p "$db_ws_settings_dir" 
 
-    echo "...  create plugins dir"
-    mkdir -p "$db_ws_plugins_dir"             # create DropBox plugins dir 
-
-    echo "...  create settings dir"
-    mkdir -p "$db_ws_settings_dir"            # create DropBox settings dir 
-
-    echo "...  upload plugins"
-    for dir in "${ws_plugins_dirs[@]}"; do    # upload plugins to DropBox
+    echo "...  upload WebStorm plugins/settings"
+    for dir in "${ws_plugins_dirs[@]}"; do
       cp -r "$dir" "$db_ws_plugins_dir"
     done
 
-    echo "...  upload settings"
-    for dir in "${ws_settings_dirs[@]}"; do   # upload settings to DropBox
+    for dir in "${ws_settings_dirs[@]}"; do
       cp -r "$dir" "$db_ws_settings_dir"
     done
 
-    symlink_db_to_ws                          # symlink DropBox to local
+    symlink_db_to_ws
   else
-    echo ""
     echo "... skipping, WebStorm symlink"
-    echo ""
   fi
 }
 
@@ -119,15 +113,33 @@ prompt_create_upload_current_to_db() {
 if [ ! -d $db_dir ]; then
   echo "... skipping, cannot find "$db_dir""
 else
-  if [ ! -d $db_ws_plugins_dir ] && [ ! -d $db_ws_settings_dir ]; then
-    echo "... missing plugins/settings directories:"
-    echo "      "$db_ws_plugins_dir""
-    echo "      "$db_ws_settings_dir""
+  echo "... found DropBox"
 
-    prompt_create_upload_current_to_db
+  # no webstorm plugins, exit
+  if [ ${#ws_plugins_dirs[@]} -eq 0 ]; then
+    echo "... skipping, cannot find WebStorm plugins"
   else
-    echo "... found DropBox plugins/settings"
 
-    symlink_db_to_ws
+    # no webstorm settings, exit
+    if [ ${#ws_settings_dirs[@]} -eq 0 ]; then
+      echo "... skipping, cannot find WebStorm settings"
+    else
+      echo "... found WebStorm plugins/settings"
+  
+      # no DropBox plugins/settings folders
+      # prompt to create and upload current
+      if [ ! -d $db_ws_plugins_dir ] && [ ! -d $db_ws_settings_dir ]; then
+        echo "... missing DropBox plugins/settings sync directories:"
+        echo "      "$db_ws_plugins_dir""
+        echo "      "$db_ws_settings_dir""
+
+        prompt_create_upload_current_to_db
+      else
+  
+        # all good, symlink everything!
+        echo "... found DropBox plugins/settings"
+        symlink_db_to_ws
+      fi
+    fi
   fi
 fi
