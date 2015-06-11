@@ -53,6 +53,7 @@ brew cask install \
   java \
   quicksilver \
   webstorm \
+  sublime-text \
   screenhero \
   spectacle
 
