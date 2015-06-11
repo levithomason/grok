@@ -22,7 +22,7 @@ only I know how to use.
 Run the bash curl script above or clone and run `bash ./bootstrap`. 
 
 **Modify**  
-*Hack* on `~/.grokfiles`.  *Run* `grok` to execute changes. *Push when you're happy. 
+Hack on `~/.grokfiles`.  Run `grok` to execute changes. Push when you're happy. 
 
 **Update**  
 Run `grok` at anytime to pull the latest changes and configure your machine.
@@ -37,10 +37,10 @@ following [Steven Skoczen](https://github.com/skoczen/dotfiles) and forking
 me and I credit mostly his work. I then setup [boxen](https://boxen.github.com)
 to provision an entire rig.  This went on a few years.
 
-Then, I wanted something for me, easy to understand, something I could **grok**.
+Then, I wanted something easy to use, that did it all, something I could *grok*.
 
 ## Features
-Here are some of the things grok does.  Better docs will happen.
+Here are some of the things Grok does.  Better docs will happen.
 
 ### OSX Settings
 
@@ -73,17 +73,7 @@ See `/topics/webstorm/` for how I sync them with DropBox.
 ### ~/.grokfiles
 Everything lives here.  You're original `~/.*` files are symlinked here, too.
 
-The main file you'll want to change right off the bat is `zsh/zshrc.symlink`,
-which sets up a few paths that'll be different on your particular machine.
-
-`dot` is a simple script that installs some dependencies, sets sane OS X
-defaults, and so on. Tweak this script, and occasionally run `dot` from
-time to time to keep your environment fresh and up-to-date. You can find
-this script in `bin/`.
-
-### Topics
-
-Dotfiles organizes dotfiles by topic. Think of a topic as a domain.
+Grok organizes dotfiles by topic. Think of a topic as a domain.
 
 Files are loaded in sane order:
 
@@ -134,7 +124,7 @@ Take a look at the a couple for an example.
 
 ### ~/.grokfiles/lib
 
-This is everything grok needs to run.  Scripts that are needed throughout grok
+This is everything grok needs to run.  Scripts that are needed throughout Grok
 are placed here. It'd be a good idea to understand what these are doing.
 
 ## Road Map
@@ -145,7 +135,7 @@ are placed here. It'd be a good idea to understand what these are doing.
     - creating a module
 - consistent logging, replace all `GROK:` logs.
 - formalize a `grok` sync folder with prompt for Google Drive / DropBox
-- finish refactor naming to grok
+- finish refactor naming to Grok
 - flatten structure for easy of understanding, prefix non-module folders `_`
 - grok cli
   - ~~update (pull changes, run)~~
