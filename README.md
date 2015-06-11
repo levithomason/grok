@@ -6,6 +6,7 @@ Grok makes it easy to develop from multiple Macs (home, work, laptop, etc).
 ```bash
 bash <(curl -fsSL https://raw.github.com/levithomason/grok/master/install)
 ```
+Grok asks before doing anything nuclear and gives options like backup, overwrite or skip.
 
 ## BigFatWarning™
 
