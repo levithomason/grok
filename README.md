@@ -85,22 +85,22 @@ Files are loaded in sane order:
         install.sh            only on `bootstrap`
         *.symlink             only on `bootstrap`
 
-#### topics/foo-topic/...
+#### topics/foo-topic...
 
-##### path.zsh
+##### /path.zsh
 >Loaded first, expected to setup `$PATH`.
 
-##### \*.zsh
+##### /\*.zsh
 >Anything with an extension of `.zsh` will get automatically included into your 
 shell.  Runs after `path.zsh` files and before `completion.zsh` files.
 
-##### completion.zsh
+##### /completion.zsh
 >Loaded last, expected to setup autocomplete.
 
-##### install.sh
+##### /install.sh
 >This file is only loaded during the initial `bootstrap` or by running `grok`.
 
-##### \*.symlink
+##### /\*.symlink
 >Anything with an extension of `.symlink` will get symlinked without extension 
 >into `$HOME`.  This is so you can keep all of those versioned in your dotfiles 
 >but still keep those autoloaded files in your home directory.
