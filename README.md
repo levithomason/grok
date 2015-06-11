@@ -43,29 +43,24 @@ Then, I wanted something easy to use, that did it all, something I could *grok*.
 ## Features
 Here are some of the things Grok does.  Better docs will happen.
 
-### OSX Settings
-
+**OSX Settings**  
 See `/topic/osx`
 
-### Desktop Apps
-
+**Desktop Apps**  
 See `/topic/homebrew`.
 
-### CLI Tools
-
+**CLI Tools**  
 See `/topic/homebrew`.
 
-### dotfiles
-
+**dotfiles**  
 See `/bootstrap/` for initial setup and symlinking of your `~/.*` files.  
 See `/topic/zsh/zshrc.symlink` for what happens when your shell starts.
 
-### ...custom scripts
-
+**...custom scripts**  
 I needed to sync WebStorm settings, all of them, and the plugin didn't work.
 After reading the JetBrains
 [docs](https://www.jetbrains.com/webstorm/help/project-and-ide-settings.html#d552893e149) 
-on settings, it's pretty easy.
+on settings, it's pretty easy.  Custom topics let you manage things like this.
 
 See `/topics/webstorm/` for how I sync them with DropBox.
 
