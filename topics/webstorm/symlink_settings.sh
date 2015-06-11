@@ -23,8 +23,18 @@ db_ws_settings_dir=$db_grok_dir/webstorm/settings
 
 # array of all WebStorm* directories, prune children
 # ignore *.backup directories, previously created by the script 
-ws_plugins_dirs=$(find -L ~/Library/Preferences/WebStorm* -type d -prune -not -name *.backup)
-ws_settings_dirs=$(find -L ~/Library/Application\ Support/WebStorm* -type d -prune -not -name *.backup)
+# turn find results into arrays, bash is ugly!
+#   http://stackoverflow.com/questions/23356779/how-can-i-store-find-command-result-as-arrays-in-bash
+ 
+ws_plugins_dirs=()
+while IFS=  read -r -d $'\0'; do
+    ws_plugins_dirs+=("$REPLY")
+done < <(find -L ~/Library/Preferences/WebStorm* -type d -prune -not -name *.backup -print0)
+
+ws_settings_dirs=()
+while IFS=  read -r -d $'\0'; do
+    ws_settings_dirs+=("$REPLY")
+done < <(find -L ~/Library/Application\ Support/WebStorm* -type d -prune -not -name *.backup -print0)
 
 #
 # Link
