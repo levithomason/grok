@@ -85,27 +85,27 @@ Files are loaded in sane order:
         install.sh            only on `bootstrap`
         *.symlink             only on `bootstrap`
 
-**topic/...**
+#### topics/some-topic/...
 
-**path.zsh**
-Loaded first, expected to setup `$PATH`.
+##### path.zsh
+>Loaded first, expected to setup `$PATH`.
 
-**\*.zsh**
-Anything with an extension of `.zsh` will get automatically included into your 
+##### \*.zsh
+>Anything with an extension of `.zsh` will get automatically included into your 
 shell.  Runs after `path.zsh` files and before `completion.zsh` files.
 
-**completion.zsh**
-Loaded last, expected to setup autocomplete.
+##### completion.zsh
+>Loaded last, expected to setup autocomplete.
 
-**install.sh**
-This file is only loaded during the initial `bootstrap` or by running `grok`.
+##### install.sh
+>This file is only loaded during the initial `bootstrap` or by running `grok`.
 
-**\*.symlink**
-Anything with an extension of `.symlink` will get symlinked without extension 
-into `$HOME`.  This is so you can keep all of those versioned in your dotfiles 
-but still keep those autoloaded files in your home directory.
-
-This only happens when running `/bootstrap`. 
+##### \*.symlink
+>Anything with an extension of `.symlink` will get symlinked without extension 
+>into `$HOME`.  This is so you can keep all of those versioned in your dotfiles 
+>but still keep those autoloaded files in your home directory.
+>
+>This only happens when running `/bootstrap`. 
 
 #### Adding topics
 If you're adding a new area to your dotfiles — like, "Java" — simply add a 
