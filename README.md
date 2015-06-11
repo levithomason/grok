@@ -85,7 +85,7 @@ Files are loaded in sane order:
         install.sh            only on `bootstrap`
         *.symlink             only on `bootstrap`
 
-#### topics/some-topic/...
+#### topics/foo-topic/...
 
 ##### path.zsh
 >Loaded first, expected to setup `$PATH`.
