@@ -70,7 +70,7 @@ See `/topics/webstorm/` for how I sync them with DropBox.
 
 ## Learn More
 
-### ~/.grokfiles
+### ~/.grokfiles...
 Everything lives here.  You're original `~/.*` files are symlinked here, too.
 
 Grok organizes dotfiles by topic. Think of a topic as a domain.
@@ -85,7 +85,7 @@ Files are loaded in sane order:
         install.sh            only on `bootstrap`
         *.symlink             only on `bootstrap`
 
-#### topics/foo-topic...
+#### /topics/foo-topic...
 
 ##### /path.zsh
 >Loaded first, expected to setup `$PATH`.
