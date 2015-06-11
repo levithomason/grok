@@ -2,7 +2,7 @@
 #
 # SYMLINK SETTINGS
 #
-# https://www.jetbrains.com/ws/help/project-and-ide-settings.html
+# https://www.jetbrains.com/webstorm/help/project-and-ide-settings.html#d552893e149
 #
 # This script symlinks local WebStorm settings to DropBox. If DropBox is not
 # found, the script exists.  If DropBox is found, but the settings to symlink
@@ -29,12 +29,12 @@ db_ws_settings_dir=$db_grok_dir/webstorm/settings
 ws_plugins_dirs=()
 while IFS=  read -r -d $'\0'; do
     ws_plugins_dirs+=("$REPLY")
-done < <(find -L ~/Library/Preferences/WebStorm* -type d -prune -not -name *.backup -print0)
+done < <(find -L ~/Library/Application\ Support/WebStorm* -type d -prune -not -name *.backup -print0)
 
 ws_settings_dirs=()
 while IFS=  read -r -d $'\0'; do
     ws_settings_dirs+=("$REPLY")
-done < <(find -L ~/Library/Application\ Support/WebStorm* -type d -prune -not -name *.backup -print0)
+done < <(find -L ~/Library/Preferences/WebStorm* -type d -prune -not -name *.backup -print0)
 
 #
 # Link
