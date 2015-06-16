@@ -5,7 +5,7 @@
 ###############################################################################
 
 # Enable highlight hover effect for the grid view of a stack (Dock)
-# defaults write com.apple.dock mouse-over-hilite-stack -bool true
+defaults write com.apple.dock mouse-over-hilite-stack -bool true
 
 # Set the icon size of Dock items to 36 pixels
 # defaults write com.apple.dock tilesize -int 36
@@ -31,20 +31,20 @@ defaults write com.apple.dock persistent-apps -array ""
 defaults write com.apple.dock launchanim -bool false
 
 # Speed up Mission Control animations
-defaults write com.apple.dock expose-animation-duration -float 0.1
+defaults write com.apple.dock expose-animation-duration -float 0.2
 
 # Don’t group windows by application in Mission Control
 # (i.e. use the old Exposé behavior instead)
 defaults write com.apple.dock expose-group-by-app -bool false
 
 # Disable Dashboard
-# defaults write com.apple.dashboard mcx-disabled -bool true
+defaults write com.apple.dashboard mcx-disabled -bool true
 
 # Don’t show Dashboard as a Space
-# defaults write com.apple.dock dashboard-in-overlay -bool true
+defaults write com.apple.dock dashboard-in-overlay -bool true
 
 # Don’t automatically rearrange Spaces based on most recent use
-# defaults write com.apple.dock mru-spaces -bool false
+defaults write com.apple.dock mru-spaces -bool false
 
 # Remove the auto-hiding Dock delay
 defaults write com.apple.dock autohide-delay -float 0
@@ -72,12 +72,6 @@ find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -dele
 
 # Add iOS Simulator to Launchpad
 sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone Simulator.app" "/Applications/iOS Simulator.app"
-
-# Add a spacer to the left side of the Dock (where the applications are)
-defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type="spacer-tile";}'
-
-# Add a spacer to the right side of the Dock (where the Trash is)
-defaults write com.apple.dock persistent-others -array-add '{tile-data={}; tile-type="spacer-tile";}'
 
 # Hot corners
 # Possible values:
