@@ -40,7 +40,8 @@ echo "... installing cli tools"
 
 brew install \
   git \
-  nodenv
+  nodenv \
+  heroku-toolbelt
 
 echo "... installing desktop apps"
 

@@ -10,3 +10,6 @@ echo 'GROK: zshrc'
 
 . $HOME/.grokfiles/lib/set_env_variables.sh
 . $HOME/.grokfiles/lib/run_topic_zsh_files.zsh
+
+# added by travis gem
+[ -f /Users/levithomason/.travis/travis.sh ] && source /Users/levithomason/.travis/travis.sh
