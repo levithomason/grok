@@ -51,7 +51,6 @@ brew cask install \
   dropbox \
   google-chrome \
   google-drive \
-  java \
   quicksilver \
   webstorm \
   sublime-text \

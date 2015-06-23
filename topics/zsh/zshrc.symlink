@@ -13,3 +13,6 @@ echo 'GROK: zshrc'
 
 # added by travis gem
 [ -f /Users/levithomason/.travis/travis.sh ] && source /Users/levithomason/.travis/travis.sh
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
