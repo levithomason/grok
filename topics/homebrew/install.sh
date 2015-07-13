@@ -55,6 +55,7 @@ brew cask install \
   webstorm \
   sublime-text \
   screenhero \
+  slack \
   spectacle
 
 
