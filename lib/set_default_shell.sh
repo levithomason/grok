@@ -8,5 +8,5 @@ if [ "$SHELL" != "/bin/zsh" ]
 then
   chsh -s $(which zsh)
 else
-  echo "ZSH is already default"
+  echo "  ZSH is already the default shell"
 fi

@@ -130,7 +130,7 @@ symlink_dotfiles
 
 # Set shell to zsh
 info "setting default shell"
-source $GROK_LIB/set_default_shell
+source $GROK_LIB/set_default_shell.sh
 
 # Run topic install.sh scripts.
 info "installing dependencies"
