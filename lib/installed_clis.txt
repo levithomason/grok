@@ -1,0 +1,16 @@
+brew-cask
+cask
+coreutils
+emacs
+git
+grc
+heroku-toolbelt
+jpeg
+node
+nodenv
+openssl
+ossp-uuid
+postgresql
+rabbitmq
+readline
+spark

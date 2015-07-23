@@ -1,18 +1,92 @@
 ###############################################################################
 # GROK
 #
-# Run this function to 'reset & update' your setup.
+# Run this function to "reset & update" your setup.
+#
+
+command=$1
+
+###############################################################################
+# DEFINE FUNCTIONS
+#
+
+show_usage() {
+  echo ""
+  echo "  Usage:"
+  echo "    grok update                           - pull latest repo and run"
+  echo "    grok cli <install|uninstall> <name>   - add/remove cli tools"
+  echo "    grok app <install|uninstall> <name>   - add/remove desktop apps"
+}
+
+commit_push_reminder() {
+  echo
+  echo "==============================================================================="
+  echo "  HEADS UP!"
+  echo "==============================================================================="
+  echo
+  echo "  Be sure to COMMIT and PUSH any changes."
+}
+
+invalid_option() {
+  echo ""
+  echo "  $1 is not a valid option"
+  echo ""
+  show_usage
+}
+
+install_all() {
+  . $GROK_LIB/install_clis.zsh
+  . $GROK_LIB/install_apps.zsh
+}
+
+app_action() {
+  brew cask $1 $2
+  . $GROK_LIB/freeze_apps.zsh
+  commit_push_reminder
+}
+
+cli_action() {
+  brew $1 $2
+  . $GROK_LIB/freeze_clis.zsh
+  commit_push_reminder
+}
+
+###############################################################################
+# COMMAND
 #
 
 #
-# Pull latest changes
+# Usage
 #
-
-. $GROK_LIB/pull_latest_grokfiles.zsh
+if [[ $command == "" ]] then
+  show_usage
+  return false
+fi
 
 #
-# Run Dotfiles
+# Install / Uninstall
 #
+if [[ $command == "cli" || $command == "app" ]] then
+  action=$2
+  program=$3
 
-. $GROK_LIB/run_topic_installs.zsh
-. $GROK_LIB/run_topic_zsh_files.zsh
+  # install all, no args passed
+  if [[ -z "$action" && -z "$program" ]] then
+    install_all
+  fi
+
+  # cli
+  if [[ $command == "cli" ]] then
+    cli_action $action $program
+  fi
+
+  # app
+  if [[ $command == "app" ]] then
+    app_action $action $program
+  fi
+
+  unset action
+  unset program
+fi
+
+unset command

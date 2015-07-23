@@ -1,0 +1,13 @@
+1password
+dropbox
+google-chrome
+google-drive
+java
+node
+quicksilver
+screenhero
+slack
+spectacle
+sublime-text
+webstorm
+wercker

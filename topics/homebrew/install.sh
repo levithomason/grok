@@ -21,7 +21,7 @@ brew update
 
 
 ###############################################################################
-# Dotfile packages
+# Grok requirements
 #
 
 brew install \
@@ -32,32 +32,11 @@ brew install \
 
 
 ###############################################################################
-# User apps
+# User CLIs and apps
 #
 
-# CLI tools
-echo "... installing cli tools"
-
-brew install \
-  git \
-  nodenv \
-  heroku-toolbelt
-
-echo "... installing desktop apps"
-
-# Desktop apps
-brew cask install \
-  1password \
-  dropbox \
-  google-chrome \
-  google-drive \
-  quicksilver \
-  webstorm \
-  sublime-text \
-  screenhero \
-  slack \
-  spectacle
-
+. $GROK_LIB/install_clis.zsh
+. $GROK_LIB/install_apps.zsh
 
 ###############################################################################
 # Post install health
