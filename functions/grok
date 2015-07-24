@@ -74,7 +74,7 @@ fi
 #
 # List
 #
-if [[ $command == "list" || $command == "uninstall" ]] then
+if [[ $command == "list" ]] then
   . $GROK_LIB/list_clis.zsh
   . $GROK_LIB/list_apps.zsh
 fi
