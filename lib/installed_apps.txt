@@ -9,5 +9,6 @@ screenhero
 slack
 spectacle
 sublime-text
+virtualbox
 webstorm
 wercker
