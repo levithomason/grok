@@ -26,13 +26,24 @@ show_usage() {
   echo "      - manage cli tools and desktop apps"
 }
 
-commit_push_reminder() {
-  echo
-  echo "==============================================================================="
-  echo "  HEADS UP!"
-  echo "==============================================================================="
-  echo
-  echo "  Be sure to COMMIT and PUSH any changes."
+prompt_commit_push() {
+  status=$(git status --short)
+  if [[ -n "$status" ]] then
+    echo "GROK: no changes made."
+    return false
+  fi
+
+  echo ""
+  # read silent (-s), single character (-k)
+  read -k "SHOULD_COMMIT?GROK: Commit and push changes? [y/N] "
+  echo ""
+  if [[ $SHOULD_COMMIT =~ ^[Yy]$ ]] then
+    echo "git add $GROK_INSTALLED_APPS"
+    echo "git add $GROK_INSTALLED_CLIS"
+    echo "git commit -m \"$1\""
+    echo "git push"
+    echo ""
+  fi
 }
 
 invalid_option() {
@@ -102,14 +113,14 @@ if [[ $command == "install" || $command == "uninstall" ]] then
   if [[ $type == "cli" ]] then
     brew $command $name
     . $GROK_LIB/freeze_clis.zsh
-    commit_push_reminder
+    prompt_commit_push "$command $type: $name"
   fi
 
   # app
   if [[ $type == "app" ]] then
     brew cask $command $name
     . $GROK_LIB/freeze_apps.zsh
-    commit_push_reminder
+    prompt_commit_push "$command $type: $name"
   fi
 
   unset type
