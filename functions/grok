@@ -27,23 +27,38 @@ show_usage() {
 }
 
 prompt_commit_push() {
-  status=$(git status --short)
-  if [[ -n "$status" ]] then
+  old_pwd=$(pwd)
+  cd $GROK_ROOT
+  app_status=$(git status git status $GROK_INSTALLED_APPS --short)
+  cli_status=$(git status git status $GROK_INSTALLED_CLIS --short)
+
+  if [[ -z $cli_status && -z $app_status ]] then
+    echo ""
     echo "GROK: no changes made."
-    return false
+  else
+    echo ""
+    [[ -n $app_status ]] && git diff $GROK_INSTALLED_APPS
+    [[ -n $cli_status ]] && git diff $GROK_INSTALLED_CLIS
+    echo ""
+    # read silent (-s), single character (-k)
+    read -k "SHOULD_COMMIT?Commit and push changes? [y/N] "
+    echo ""
+
+    if [[ $SHOULD_COMMIT =~ ^[Yy]$ ]] then
+      [[ -n $app_status ]] && git add $GROK_INSTALLED_APPS
+      [[ -n $cli_status ]] && git add $GROK_INSTALLED_CLIS
+
+      git commit -m \"$1\"
+      git push
+      echo ""
+    fi
   fi
 
-  echo ""
-  # read silent (-s), single character (-k)
-  read -k "SHOULD_COMMIT?GROK: Commit and push changes? [y/N] "
-  echo ""
-  if [[ $SHOULD_COMMIT =~ ^[Yy]$ ]] then
-    echo "git add $GROK_INSTALLED_APPS"
-    echo "git add $GROK_INSTALLED_CLIS"
-    echo "git commit -m \"$1\""
-    echo "git push"
-    echo ""
-  fi
+  cd $old_pwd
+
+  unset app_status
+  unset cli_status
+  unset SHOULD_COMMIT
 }
 
 invalid_option() {
