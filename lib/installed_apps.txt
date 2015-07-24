@@ -10,3 +10,4 @@ slack
 spectacle
 sublime-text
 webstorm
+wercker
