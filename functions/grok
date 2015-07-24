@@ -13,9 +13,17 @@ command=$1
 show_usage() {
   echo ""
   echo "  Usage:"
-  echo "    grok update                           - pull latest repo and run"
-  echo "    grok cli <install|uninstall> <name>   - add/remove cli tools"
-  echo "    grok app <install|uninstall> <name>   - add/remove desktop apps"
+  echo "    grok update"
+  echo "      - pull latest repo and run"
+  echo ""
+  echo "    grok install"
+  echo "      - installs frozen cli tools and desktop apps"
+  echo ""
+  echo "    grok list"
+  echo "      - lists cli tools and desktop apps"
+  echo ""
+  echo "    grok <install|uninstall> <cli|app> <name>"
+  echo "      - manage cli tools and desktop apps"
 }
 
 commit_push_reminder() {
@@ -29,7 +37,7 @@ commit_push_reminder() {
 
 invalid_option() {
   echo ""
-  echo "  $1 is not a valid option"
+  echo "  Error: \"$1\" is not a valid option"
   echo ""
   show_usage
 }
@@ -39,18 +47,6 @@ install_all() {
   . $GROK_LIB/install_apps.zsh
 }
 
-app_action() {
-  brew cask $1 $2
-  . $GROK_LIB/freeze_apps.zsh
-  commit_push_reminder
-}
-
-cli_action() {
-  brew $1 $2
-  . $GROK_LIB/freeze_clis.zsh
-  commit_push_reminder
-}
-
 ###############################################################################
 # COMMAND
 #
@@ -58,35 +54,73 @@ cli_action() {
 #
 # Usage
 #
-if [[ $command == "" ]] then
+if [[ -z $command || $command == "help" || $command == "--help" ]] then
   show_usage
   return false
 fi
 
 #
+# Invalid Command
+#
+if [[ $command != "list" &&     \
+      $command != "update" &&   \
+      $command != "install" &&  \
+      $command != "uninstall"   \
+   ]] then
+  show_usage
+  return false
+fi
+
+#
+# List
+#
+if [[ $command == "list" || $command == "uninstall" ]] then
+  . $GROK_LIB/list_clis.zsh
+  . $GROK_LIB/list_apps.zsh
+fi
+
+#
 # Install / Uninstall
 #
-if [[ $command == "cli" || $command == "app" ]] then
-  action=$2
-  program=$3
+if [[ $command == "install" || $command == "uninstall" ]] then
+  type=$2
+  name=$3
 
-  # install all, no args passed
-  if [[ -z "$action" && -z "$program" ]] then
+  # Install all
+  if [[ -z $type && -z $name && $command == "install" ]] then
     install_all
+    return false
+  fi
+
+  # invalid type
+  if [[ -n $type && $type != "cli" && $type != "app" ]] then
+    invalid_option $type
+    return false
   fi
 
   # cli
-  if [[ $command == "cli" ]] then
-    cli_action $action $program
+  if [[ $type == "cli" ]] then
+    brew $command $name
+    . $GROK_LIB/freeze_clis.zsh
+    commit_push_reminder
   fi
 
   # app
-  if [[ $command == "app" ]] then
-    app_action $action $program
+  if [[ $type == "app" ]] then
+    brew cask $command $name
+    . $GROK_LIB/freeze_apps.zsh
+    commit_push_reminder
   fi
 
-  unset action
-  unset program
+  unset type
+  unset name
+fi
+
+#
+# Update
+#
+if [[ $command == "update" ]] then
+  . $GROK_LIB/update.zsh
 fi
 
 unset command

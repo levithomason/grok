@@ -8,6 +8,19 @@ bash <(curl -fsSL https://raw.github.com/levithomason/grok/master/install)
 ```
 Grok asks before doing anything nuclear and gives options like backup, overwrite or skip.
 
+## Examples
+
+    # cli tools
+    $ grok install cli hero-toolbelt
+
+    # desktop apps
+    $ grok install app slack
+
+    # pull the repo and run grok
+    $ grok update
+
+_______________________________________________________________________________
+  
 ## BigFatWarning™
 
 *This repo is specialized for my machine. I plan to release a generic version
