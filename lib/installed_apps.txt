@@ -5,6 +5,7 @@ google-drive
 java
 node
 quicksilver
+screenhero
 slack
 spectacle
 sublime-text
