@@ -35,7 +35,7 @@ fnGitReset() {
     echo ""
     echo "Uncommited chagnes:"
     git status -s
-    
+
     echo ""
     read -q "CONFIRM?PERMANENTLY loose uncommitted changes above? (y/N) "
 
@@ -43,13 +43,13 @@ fnGitReset() {
       echo ""
       read -q "CONFIRM_AGAIN?You're aware there exists no black magic that can bring these back? (y/N) "
       echo ""
-    
+
       if [[ $CONFIRM_AGAIN == "y" ]] then
         git reset --hard
       fi
     fi
   fi
-  
+
   unset uncommitted_changes
   unset CONFIRM
   unset CONFIRM_AGAIN
@@ -60,12 +60,12 @@ fnGitPrune() {
   if [[ $(fnIsGitRepo) != "true" ]] then
     return false
   fi
-  
+
   if [[ $1 != "" ]] then
     # save current branch
     original_branch=$(git branch | grep "* ");
     original_branch=${original_branch/"* "};
-  
+
     git checkout $1;
   fi
 
@@ -78,31 +78,38 @@ fnGitPrune() {
   # array from lines
   branches_to_delete=("${(f)branches_to_delete}")
 
-  echo "\nBranches already merged into current branch:"
-  # list branches
-  for branch in $branches_to_delete; do
-    echo "$branch"
-  done
-  
-  echo ""
-  read -q "CONFIRM?Delete ALL these? (y/N) "
-  echo ""
+  if [[ -z $branches_to_delete ]] then
+    echo "All clean."
+  else
+    echo "\nBranches already merged into current branch:"
+    # list branches
+    for branch in $branches_to_delete; do
+      echo "$branch"
+    done
 
-  if [[ $CONFIRM == "y" ]]
-    then
-      # delete branches
-      for branch in $branches_to_delete; do
-        git branch -d ${branch// /}
-      done
-      
-    else
-      echo "\nCancelled"
+    echo ""
+    read -q "CONFIRM?Delete ALL these? (y/N) "
+    echo ""
+
+    if [[ $CONFIRM == "y" ]]
+      then
+        # delete branches
+        for branch in $branches_to_delete; do
+          git branch -d ${branch// /}
+        done
+
+      else
+        echo "\nCancelled"
+    fi
   fi
 
-  git checkout $original_branch
+  # if we switched branches, checkout the original
+  if [[ -n $original_branch ]] then
+    git checkout $original_branch
+    unset original_branch
+  fi
 
   unset branches_to_delete
-  unset original_branch
 }
 
 fnGitBranch() {
@@ -158,7 +165,7 @@ fnGitCheckout() {
   else
     go_query="."
   fi
-  
+
   # create branch array, only allow unique items
   # we'll add branches from HEAD and remotes, meaning possible dupes
   go_branches=()
@@ -185,13 +192,13 @@ fnGitCheckout() {
       branch=${branch//\'}                    #   single quotes
       branch=${branch/refs\/heads\/}          #   "refs/heads/"
       branch=${(S)branch/refs\/remotes\/*\/}  #   "refs/remotes/*/" (S) flag == shortest match
-      
+
       # add scrubbed branch name to array
       go_branches+=($branch)
-      
+
     done;
   fi
-  
+
   # running recursively with no matching branches results in an endless loop
   # if there are no 'other' branches to switch to, notify and exit
   if (( ${#go_branches[@]} == 0 )) then
@@ -202,20 +209,20 @@ fnGitCheckout() {
   go_counter=1
   go_matches=()
   for go_branch in $go_branches; do
-    
+
     # if branch contains query
     if [[ $go_branch =~ $go_query ]] then;
       # add to array
       go_matches[$go_counter]=$go_branch
-    
+
       # print index & name
       echo "$go_counter: $go_branch"
-    
+
       # increment counter
       go_counter=$((go_counter+1))
     fi
   done;
-  
+
   # 0 matches - rerun with no query, showing all options
   if (( ${#go_matches[@]} == 0 )) then
     fnGitCheckout
@@ -231,7 +238,7 @@ fnGitCheckout() {
   if (( ${#go_matches[@]} > 1 )) then
     echo ""
     read "go_input?(query/#): "
-    
+
     # if input, attempt select branch from array by index
     if [[ $go_input != "" ]] then
       go_checkout=$go_matches[$go_input]
@@ -281,11 +288,11 @@ fnGitMerge() {
     # save current branch
     original_branch=$(git branch | grep "* ");
     original_branch=${original_branch/"* "};
-  
+
     # update master
     git checkout master
     git pull
-    
+
     # merge into original branch
     git checkout $original_branch
     git merge master
