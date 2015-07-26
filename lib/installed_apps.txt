@@ -12,3 +12,4 @@ sublime-text
 virtualbox
 webstorm
 wercker
+menumeters
