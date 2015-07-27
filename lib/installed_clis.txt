@@ -9,8 +9,4 @@ jpeg
 node
 nodenv
 openssl
-ossp-uuid
-postgresql
-rabbitmq
-readline
 spark
