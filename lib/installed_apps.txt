@@ -3,6 +3,7 @@ dropbox
 google-chrome
 google-drive
 java
+menumeters
 node
 quicksilver
 screenhero
@@ -12,4 +13,3 @@ sublime-text
 virtualbox
 webstorm
 wercker
-menumeters
