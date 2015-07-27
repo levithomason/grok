@@ -1,7 +1,6 @@
 brew-cask
 cask
 coreutils
-docker
 emacs
 git
 grc
