@@ -10,5 +10,6 @@ heroku-toolbelt
 jpeg
 node
 nodenv
+nvm
 openssl
 spark
