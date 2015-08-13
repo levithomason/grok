@@ -278,9 +278,13 @@ fnGitCommit() {
 }
 
 fnGitCommitPush() {
-  fnGitCommit $1
-  git pull
-  git push
+  if (( $# == 0 )) then
+    echo "commit what sucka?!"
+  else
+    fnGitCommit $1
+    git pull
+    git push
+  fi
 }
 
 fnGitMerge() {
