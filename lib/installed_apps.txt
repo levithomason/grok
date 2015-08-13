@@ -2,6 +2,7 @@
 dropbox
 google-chrome
 google-drive
+heroku-toolbelt
 java
 menumeters
 node
