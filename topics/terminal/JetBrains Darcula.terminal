@@ -1313,11 +1313,11 @@
 	AAAAAAAAAA3j
 	</data>
 	<key>UseBoldFonts</key>
-	<false/>
+	<true/>
 	<key>UseBrightBold</key>
 	<false/>
 	<key>name</key>
-	<string>WebStorm</string>
+	<string>JetBrains Darcula 2</string>
 	<key>type</key>
 	<string>Window Settings</string>
 </dict>
