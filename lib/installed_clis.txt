@@ -5,9 +5,11 @@ coreutils
 docker
 emacs
 git
+go
 grc
 heroku-toolbelt
 jpeg
+mercurial
 node
 nvm
 openssl
