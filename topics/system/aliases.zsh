@@ -13,4 +13,3 @@ fi
 alias "odot"="ws $GROK_ROOT"
 alias "cd.."="cd .."
 alias ".."="cd .."
-alias ws="wstorm"
