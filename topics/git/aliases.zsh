@@ -1,8 +1,7 @@
 alias ga=fnGitAdd
 alias gb=fnGitBranch
 alias gba='git branch -a'
-alias gd=fnGitDelete
-alias gdf=fnGitDeleteFeature
+alias gd='git branch -D'
 alias gbm=fnGitBranchMaster
 alias go=fnGitCheckout
 alias gol=fnGitCheckoutPull
@@ -120,24 +119,6 @@ fnGitBranch() {
     git branch feature/$1
     git checkout feature/$1
     git push -u origin feature/$1
-  fi
-}
-
-fnGitDelete() {
-  if (( $# == 0 )) then
-    echo "\n  Usage: gd <branch-to-delete> ..."
-  else
-    git branch -D $*
-    fnGitBranch
-  fi
-}
-
-fnGitDeleteFeature() {
-  if (( $# == 0 )) then
-    echo "\n  Usage: gd <branch-to-delete> ..."
-  else
-    git branch -D feature/$*
-    fnGitBranch
   fi
 }
 
