@@ -21,11 +21,13 @@ alias gt='git stash'
 alias gta='git stash apply'
 
 fnGitAdd() {
+  set -e
   git add -A .
 }
 
 # Does a hard reset with double confirmation if there are uncommitted changes.
 fnGitReset() {
+  set -e
   uncommitted_changes=($(git status -s))
 
   if (( ${#uncommitted_changes[@]} == 0 )) then
@@ -55,6 +57,7 @@ fnGitReset() {
 }
 
 fnGitPrune() {
+  set -e
   # make sure we're in a git repo
   if [[ $(fnIsGitRepo) != "true" ]] then
     return false
@@ -112,6 +115,7 @@ fnGitPrune() {
 }
 
 fnGitBranch() {
+  set -e
   if (( $# == 0 )) then
     git branch --all
   else
@@ -123,6 +127,7 @@ fnGitBranch() {
 }
 
 fnGitBranchMaster() {
+  set -e
   if (( $# == 0 )) then
     git branch -a
   else
@@ -135,6 +140,7 @@ fnGitBranchMaster() {
 }
 
 fnGitCheckout() {
+  set -e
   # make sure we're in a git repo
   if [[ $(fnIsGitRepo) != "true" ]] then
     return false
@@ -245,11 +251,13 @@ fnGitCheckout() {
 }
 
 fnGitCheckoutPull() {
+  set -e
   fnGitCheckout $1
   git pull
 }
 
 fnGitCommit() {
+  set -e
   if (( $# == 0 )) then
     echo "commit what sucka?!"
   else
@@ -259,6 +267,7 @@ fnGitCommit() {
 }
 
 fnGitCommitPush() {
+  set -e
   if (( $# == 0 )) then
     echo "commit what sucka?!"
   else
@@ -269,6 +278,7 @@ fnGitCommitPush() {
 }
 
 fnGitMerge() {
+  set -e
   if (( $# == 0 )) then
     # save current branch
     original_branch=$(git branch | grep "* ");
@@ -289,6 +299,7 @@ fnGitMerge() {
 }
 
 fnGitLog() {
+  set -e
   if (( $# == 0 )) then
     git log --decorate --graph --oneline -n 10
   else
@@ -297,6 +308,7 @@ fnGitLog() {
 }
 
 fnGitLogVerbose() {
+  set -e
   if (( $# == 0 )) then
     git log --decorate --graph -n 10
   else
@@ -309,5 +321,6 @@ fnGitLogVerbose() {
 ##################################################
 
 fnIsGitRepo() {
+  set -e
   git rev-parse --is-inside-work-tree
 }
