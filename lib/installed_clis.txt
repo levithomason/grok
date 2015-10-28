@@ -1,6 +1,7 @@
 brew-cask
 cask
 coreutils
+docker-machine
 emacs
 git
 go
