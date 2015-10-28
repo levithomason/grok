@@ -3,6 +3,7 @@ brew-cask
 cask
 coreutils
 docker
+docker-machine
 emacs
 git
 go
