@@ -1,1 +1,3 @@
-alias ws="open -a WebStorm\ 11\ EAP"
+alias webstorm=/Applications/WebStorm.app/Contents/MacOS/webstorm
+alias wstorm=webstorm
+alias ws=webstorm
