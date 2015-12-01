@@ -6,6 +6,7 @@ git
 go
 grc
 heroku-toolbelt
+hub
 jpeg
 mercurial
 node
