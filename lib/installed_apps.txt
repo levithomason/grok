@@ -1,5 +1,6 @@
 1password
 dropbox
+flux
 google-chrome
 google-drive
 heroku-toolbelt
