@@ -71,37 +71,17 @@ directory_name() {
   echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 }
 
-#
-# START VIRTUALENVWRAPPER SUPPORT
-#
-
-in_venv() {
-  if [[ "$VIRTUAL_ENV" != "" ]]; then
-    echo "true"
-  else
-    echo "false"
-  fi
-}
-
-venv_name() {
-  if [[ $(in_venv) == "true"  ]]; then
-    basename $VIRTUAL_ENV
-  else
-    echo "system"
-  fi
-}
-
 venv_prompt() {
-  echo "%{$fg_bold[green]%}[$(venv_name)]%{$reset_color%} "
+  if ! [[ -z ${VIRTUAL_ENV} ]]; then
+    name=$(basename $VIRTUAL_ENV)
+  else
+    name="system"
+  fi
+
+  echo "%{$fg_bold[green]%}[$name]%{$reset_color%} "
 }
 
-#
-# END VIRTUALENVWRAPPER SUPPORT
-#
-
-# Old prompt, included venv and rb promt
-# export PROMPT=$'\n$(venv_prompt)$(rb_prompt)in $(directory_name) $(git_dirty)$(need_push)\n› '
-export PROMPT=$'\n$(directory_name) $(git_dirty)$(need_push)\n› '
+export PROMPT=$'\n$(venv_prompt)$(rb_prompt)in $(directory_name) $(git_dirty)$(need_push)\n› '
 
 set_prompt () {
   export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
