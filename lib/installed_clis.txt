@@ -13,4 +13,5 @@ mongodb
 node
 nvm
 openssl
+redis
 spark
