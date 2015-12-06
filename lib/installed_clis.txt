@@ -9,6 +9,7 @@ heroku-toolbelt
 hub
 jpeg
 mercurial
+mongodb
 node
 nvm
 openssl
