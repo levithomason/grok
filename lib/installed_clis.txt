@@ -1,5 +1,6 @@
 brew-cask
 cask
+codeclimate
 coreutils
 emacs
 git
