@@ -32,12 +32,13 @@ fnGitAdd() {
 }
 
 fnGitPushForce() {
-    echo ""
-    read -q "CONFIRM?FORCE push $(fnCurrentGitBranch)? (y/N) "
+  echo ""
+  read -q "CONFIRM?FORCE push $(fnCurrentGitBranch)? (y/N) "
+  echo ""
 
-    if [[ $CONFIRM == "y" ]] then
-      git push --force
-    fi
+  if [[ $CONFIRM == "y" ]] then
+    git push --force
+  fi
 }
 
 fnGitRebase() {
