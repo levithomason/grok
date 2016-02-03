@@ -16,12 +16,47 @@ alias gg=fnGitLog
 alias ggv=fnGitLogVerbose
 alias gl='git pull'
 alias gh='git push'
+alias ghf=fnGitPushForce
 alias gs='git status -sb'
 alias gt='git stash'
 alias gta='git stash apply'
+alias ge=fnGitRebase
+alias gei=fnGitRebaseInteractive
+
+fnCurrentGitBranch() {
+  echo ${$(git symbolic-ref HEAD)##refs/heads/}
+}
 
 fnGitAdd() {
   git add -A .
+}
+
+fnGitPushForce() {
+    echo ""
+    read -q "CONFIRM?FORCE push $(fnCurrentGitBranch)? (y/N) "
+
+    if [[ $CONFIRM == "y" ]] then
+      git push --force
+    fi
+}
+
+fnGitRebase() {
+  git fetch origin
+  if [[ $1 == "" ]]; then
+    echo "rebasing to master by default"
+    git rebase origin/master
+  else
+    git rebase origin/$1
+  fi
+}
+
+fnGitRebaseInteractive() {
+  if [[ $1 == "" ]]; then
+    echo "rebasing from master by default"
+    git rebase -i $(git merge-base $(fnCurrentGitBranch) master)
+  else
+    git rebase -i $(git merge-base $(fnCurrentGitBranch) $1)
+  fi
 }
 
 # Does a hard reset with double confirmation if there are uncommitted changes.
@@ -44,7 +79,7 @@ fnGitReset() {
       echo ""
 
       if [[ $CONFIRM_AGAIN == "y" ]] then
-        git reset --hard
+        git reset --hard origin/$(fnCurrentGitBranch)
       fi
     fi
   fi
@@ -62,8 +97,7 @@ fnGitPrune() {
 
   if [[ $1 != "" ]] then
     # save current branch
-    original_branch=$(git branch | grep "* ");
-    original_branch=${original_branch/"* "};
+    original_branch=$(fnCurrentGitBranch);
 
     git checkout $1;
   fi
