@@ -6,7 +6,7 @@
 echo "... adding ~/.ssh identities"
 
 # start agent
-eval `ssh-agent -s`
+eval `ssh-agent -s` > /dev/null 2>&1
 
 # add all keys
 for key in $(ls ~/.ssh/ | grep identity | grep -v \.pub$); do
