@@ -24,7 +24,7 @@ alias ge=fnGitRebase
 alias gei=fnGitRebaseInteractive
 
 fnCurrentGitBranch() {
-  echo ${$(git symbolic-ref HEAD)##refs/heads/}
+  echo $(git symbolic-ref HEAD --short)
 }
 
 fnGitAdd() {
