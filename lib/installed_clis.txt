@@ -4,6 +4,7 @@ codeclimate
 coreutils
 emacs
 git
+gnupg
 go
 grc
 heroku-toolbelt
