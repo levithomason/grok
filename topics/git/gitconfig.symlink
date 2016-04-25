@@ -3,6 +3,7 @@
 [user]
         name = levithomason
         email = me@levithomason.com
+        signingkey = 4D4B1AF3
 [alias]
         co = checkout
         promote = !$GROK_BIN/git-promote

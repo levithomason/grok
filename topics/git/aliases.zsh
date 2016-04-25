@@ -289,7 +289,7 @@ fnGitCommit() {
     echo "commit what sucka?!"
   else
     fnGitAdd
-    git commit -m "$1"
+    git commit -S -m "$1"
   fi
 }
 
