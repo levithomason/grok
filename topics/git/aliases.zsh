@@ -22,6 +22,26 @@ alias gt='git stash'
 alias gta='git stash apply'
 alias ge=fnGitRebase
 alias gei=fnGitRebaseInteractive
+alias clean-ignored=fnCleanGitIgnored
+
+fnCleanGitIgnored() {
+  if [[ ! -e ".gitignore" ]] then
+    echo "Yo, there's no .gitignore here."
+  else
+    while read line; do
+      if [[ ! -e "$line" ]] && continue
+
+      echo ""
+      echo "rm -rf $line"
+      read -q "CONFIRM?y/N: "
+      echo ""
+      [[ $CONFIRM == "y" ]] && rm -rf $line
+    done < .gitignore
+
+    echo ""
+    echo "Done"
+  fi
+}
 
 fnCurrentGitBranch() {
   echo $(git symbolic-ref HEAD --short)
