@@ -62,12 +62,13 @@ fnGitPushForce() {
 }
 
 fnGitRebase() {
-  git fetch origin
   if [[ $1 == "" ]]; then
+    git fetch origin
     echo "rebasing to master by default"
     git rebase origin/master
   else
-    git rebase origin/$1
+    git fetch -a
+    git rebase $1
   fi
 }
 
