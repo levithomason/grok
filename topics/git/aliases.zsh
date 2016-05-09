@@ -75,8 +75,10 @@ fnGitRebase() {
 fnGitRebaseInteractive() {
   if [[ $1 == "" ]]; then
     echo "rebasing from master by default"
+    git fetch origin
     git rebase -i $(git merge-base $(fnCurrentGitBranch) origin/master)
   else
+    git fetch -a
     git rebase -i $(git merge-base $(fnCurrentGitBranch) $1)
   fi
 }
