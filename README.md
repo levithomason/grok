@@ -23,8 +23,7 @@ _______________________________________________________________________________
   
 ## BigFatWarning™
 
-*This repo is specialized for my machine. I plan to release a generic version
-for everyone, soon.*
+*This repo is specialized for my machine.*
 
 Grok will configure your osx settings, desktop apps, cli tools, dotfiles, run 
 custom scripts, and make you hate me for turning your machine into something
@@ -137,16 +136,16 @@ are placed here. It'd be a good idea to understand what these are doing.
 
 ## Road Map
 - break out osx settings and use some.
-- better organized docs!
+- ~~better organized docs!~~
 - change topics to modules and give quick start:
     - how they work
     - creating a module
-- consistent logging, replace all `GROK:` logs.
+- ~~consistent logging, replace all `GROK:` logs.~~
 - formalize a `grok` sync folder with prompt for Google Drive / DropBox
-- finish refactor naming to Grok
+- ~~finish refactor naming to Grok~~
 - flatten structure for easy of understanding, prefix non-module folders `_`
 - grok cli
   - ~~update (pull changes, run)~~
-  - search/install/uninstall desktop app (alias brew cask, record changes)
+  - ~~search/install/uninstall desktop app (alias brew cask, record changes)~~
   - edit (open project in $EDITOR, replace system alias `odot`)
 - convert scripts to zsh
