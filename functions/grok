@@ -16,9 +16,9 @@ show_usage() {
   echo "    update                        pull latest repo and run"
   echo "    install   <cli|app> <name>    install new cli or desktop app"
   echo "    uninstall <cli|app> <name>    uninstall cli or desktop app"
-  echo "    install                       installs cli tools and desktop apps"
   echo "    list                          lists installed clis and apps"
   echo "    search                        search for clis and apps to install"
+  echo "    open                          open ~/.grokfile in your $EDITOR"
 }
 
 prompt_commit_push() {
@@ -69,7 +69,7 @@ install_all() {
 }
 
 ###############################################################################
-# COMMAND
+# COMMANDS
 #
 
 #
@@ -87,7 +87,8 @@ if [[ $command != "list" &&       \
       $command != "update" &&     \
       $command != "install" &&    \
       $command != "uninstall" &&  \
-      $command != "search"        \
+      $command != "search" &&     \
+      $command != "open"          \
    ]] then
   show_usage
   return false
@@ -150,6 +151,14 @@ fi
 #
 if [[ $command == "search" ]] then
   brew search $2
+fi
+
+#
+# Open
+#
+if [[ $command == "open" ]] then
+  echo "...opening $GROK_ROOT with $EDITOR"
+  $($EDITOR $GROK_ROOT)
 fi
 
 unset command
