@@ -59,12 +59,13 @@ ruby_version() {
 }
 
 rb_prompt() {
-  if ! [[ -z "$(ruby_version)" ]]
-  then
-    echo "%{$fg_bold[yellow]%}$(ruby_version)%{$reset_color%} "
+  if ! [[ -z "$(ruby_version)" ]]; then
+    local version=$(ruby_version)
   else
-    echo ""
+    version="sys"
   fi
+
+  echo "%{$fg[black]%}[rb $version]%{$reset_color%} "
 }
 
 directory_name() {
@@ -73,18 +74,25 @@ directory_name() {
 
 venv_prompt() {
   if ! [[ -z ${VIRTUAL_ENV} ]]; then
-    name=$(basename $VIRTUAL_ENV)
+    local env=$(basename $VIRTUAL_ENV)
   else
-    name="system"
+    local env="sys"
   fi
 
-  echo "%{$fg_bold[green]%}[$name]%{$reset_color%} "
+  echo "%{$fg[black]%}[py $env]%{$reset_color%} "
 }
 
-export PROMPT=$'\n$(venv_prompt)$(rb_prompt)in $(directory_name) $(git_dirty)$(need_push)\n› '
+node_prompt() {
+  if type node > /dev/null; then
+    local nodev=${$(node -v)/v}
+    local npmv=${$(npm -v)/v}
+    echo "%{$fg[black]%}[node $nodev/$npmv]%{$reset_color%} "
+  fi
+}
 
 set_prompt () {
-  export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
+  export PROMPT=$'\nin $(directory_name) $(git_dirty)$(need_push)\n› '
+  export RPROMPT="$(node_prompt)$(rb_prompt)$(venv_prompt)"
 }
 
 precmd() {
