@@ -1,3 +1,4 @@
+autoconf
 brew-cask
 cask
 codeclimate
@@ -15,5 +16,8 @@ mongodb
 node
 nvm
 openssl
+pkg-config
+rbenv
 redis
+ruby-build
 spark
