@@ -1,7 +1,7 @@
 [hub]
         protocol = https
 [user]
-        name = levithomason
+        name = Levi Thomason
         email = me@levithomason.com
         signingkey = 4D4B1AF3
 [alias]
