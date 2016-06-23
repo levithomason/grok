@@ -19,6 +19,7 @@ alias ggv=fnGitLogVerbose
 alias gl='git pull'
 alias gh='git push'
 alias ghf=fnGitPushForce
+alias gpr='hub pull-request -m $1'
 alias gs='git status -sb'
 alias gt='git stash'
 alias gta='git stash apply'
