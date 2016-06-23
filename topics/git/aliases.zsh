@@ -314,7 +314,6 @@ fnGitCommit() {
   if (( $# == 0 )) then
     echo "commit what sucka?!"
   else
-    fnGitAdd
     git commit -S -m "$1"
   fi
 }
@@ -323,6 +322,7 @@ fnGitCommitPush() {
   if (( $# == 0 )) then
     echo "commit what sucka?!"
   else
+    fnGitAdd
     fnGitCommit $1
     git pull
     git push
