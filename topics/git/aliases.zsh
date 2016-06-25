@@ -1,4 +1,5 @@
 alias ga=fnGitAdd
+alias gac='fnGitAdd && fnGitCommit'
 alias gb=fnGitBranch
 alias gba='git branch -a'
 alias gd='git branch -D'
