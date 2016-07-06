@@ -8,8 +8,8 @@ alias go=fnGitCheckout
 alias gol=fnGitCheckoutPull
 alias gc=fnGitCommit
 alias gch=fnGitCommitPush
-alias gca='git add . && git commit --amend'
-alias gcan='git add . && git commit --amend --no-edit'
+alias gca='git add -A && git commit --amend'
+alias gcan='git add -A && git commit --amend --no-edit'
 alias gi='git diff'
 alias gf='git fetch --all'
 alias gr=fnGitReset
@@ -52,7 +52,11 @@ fnCurrentGitBranch() {
 }
 
 fnGitAdd() {
-  git add -A .
+  if [[ $1 == "" ]]; then
+    git add -A
+  else
+    git add $*
+  fi
 }
 
 fnGitPushForce() {
