@@ -8,6 +8,7 @@ alias go=fnGitCheckout
 alias gol=fnGitCheckoutPull
 alias gc=fnGitCommit
 alias gch=fnGitCommitPush
+alias gach=fnGitAddCommitPush
 alias gca='git add -A && git commit --amend'
 alias gcan='git add -A && git commit --amend --no-edit'
 alias gi='git diff'
@@ -323,13 +324,20 @@ fnGitCommit() {
   fi
 }
 
+fnGitAddCommitPush() {
+  if (( $# == 0 )) then
+    echo "commit message?"
+  else
+    fnGitAdd
+    fnGitCommitPush $1
+  fi
+}
+
 fnGitCommitPush() {
   if (( $# == 0 )) then
     echo "commit what sucka?!"
   else
-    fnGitAdd
     fnGitCommit $1
-    git pull
     git push
   fi
 }
