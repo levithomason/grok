@@ -65,7 +65,7 @@ rb_prompt() {
     version="sys"
   fi
 
-  echo "%{$fg[black]%}[rb $version]%{$reset_color%} "
+  echo "%{$fg[white]%}[rb $version]%{$reset_color%} "
 }
 
 directory_name() {
@@ -79,14 +79,14 @@ venv_prompt() {
     local env="sys"
   fi
 
-  echo "%{$fg[black]%}[py $env]%{$reset_color%} "
+  echo "%{$fg[white]%}[py $env]%{$reset_color%} "
 }
 
 node_prompt() {
   if type node > /dev/null; then
     local nodev=${$(node -v)/v}
     local npmv=${$(npm -v)/v}
-    echo "%{$fg[black]%}[node $nodev/$npmv]%{$reset_color%} "
+    echo "%{$fg[white]%}[node $nodev/$npmv]%{$reset_color%} "
   fi
 }
 
