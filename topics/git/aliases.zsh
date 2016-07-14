@@ -48,8 +48,12 @@ fnCleanGitIgnored() {
   fi
 }
 
-fnCurrentGitBranch() {
+fnGitCurrentBranch() {
   echo $(git symbolic-ref HEAD --short)
+}
+
+fnGitUpstream() {
+  echo $(git rev-parse --abbrev-ref --symbolic-full-name @{u})
 }
 
 fnGitAdd() {
@@ -62,7 +66,7 @@ fnGitAdd() {
 
 fnGitPushForce() {
   echo ""
-  read -q "CONFIRM?FORCE push $(fnCurrentGitBranch)? (y/N) "
+  read -q "CONFIRM?FORCE push $(fnGitCurrentBranch)? (y/N) "
   echo ""
 
   if [[ $CONFIRM == "y" ]] then
@@ -85,10 +89,10 @@ fnGitRebaseInteractive() {
   if [[ $1 == "" ]]; then
     echo "rebasing from master by default"
     git fetch origin
-    git rebase -i $(git merge-base $(fnCurrentGitBranch) origin/master)
+    git rebase -i $(git merge-base $(fnGitCurrentBranch) origin/master)
   else
     git fetch -a
-    git rebase -i $(git merge-base $(fnCurrentGitBranch) $1)
+    git rebase -i $(git merge-base $(fnGitCurrentBranch) $1)
   fi
 }
 
@@ -112,7 +116,7 @@ fnGitReset() {
       echo ""
 
       if [[ $CONFIRM_AGAIN == "y" ]] then
-        git reset --hard origin/$(fnCurrentGitBranch)
+        git reset --hard $(fnGitUpstream)
       fi
     fi
   fi
@@ -130,7 +134,7 @@ fnGitPrune() {
 
   if [[ $1 != "" ]] then
     # save current branch
-    original_branch=$(fnCurrentGitBranch);
+    original_branch=$(fnGitCurrentBranch);
 
     git checkout $1;
   fi
