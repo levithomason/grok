@@ -117,6 +117,8 @@ fnGitReset() {
 
       if [[ $CONFIRM_AGAIN == "y" ]] then
         git reset --hard $(fnGitUpstream)
+        # also remove untracked files
+        git clean -df
       fi
     fi
   fi
