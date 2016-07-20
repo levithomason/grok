@@ -92,7 +92,9 @@ node_prompt() {
 
 set_prompt () {
   export PROMPT=$'\nin $(directory_name) $(git_dirty)$(need_push)\n› '
-  export RPROMPT="$(node_prompt)$(rb_prompt)$(venv_prompt)"
+
+  # getting versions is terribly slow
+  # export RPROMPT="$(node_prompt)$(rb_prompt)$(venv_prompt)"
 }
 
 precmd() {
