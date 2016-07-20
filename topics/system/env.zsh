@@ -1,1 +1,1 @@
-export EDITOR='wstorm'
+export EDITOR='ws'
