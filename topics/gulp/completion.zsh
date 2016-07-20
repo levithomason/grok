@@ -1,2 +1,4 @@
 # https://github.com/gulpjs/gulp/tree/master/completion
-eval "$(gulp --completion=zsh)"
+if type "gulp" > /dev/null; then
+  eval "$(gulp --completion=zsh)"
+fi
