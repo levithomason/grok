@@ -1,5 +1,5 @@
 # start default docker and init env
-init-docker() {
+docker-init() {
   if type docker-machine > /dev/null 2>&1; then
     echo "... starting default docker machine"
     docker-machine start default > /dev/null 2>&1
