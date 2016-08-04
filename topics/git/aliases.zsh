@@ -194,9 +194,8 @@ fnGitBranch() {
     git branch --all
   else
     git pull
-    git branch feature/$1
-    git checkout feature/$1
-    git push -u origin feature/$1
+    git checkout -b $1
+    git push -u origin $1
   fi
 }
 
@@ -206,9 +205,8 @@ fnGitBranchMaster() {
   else
     git checkout master
     git pull
-    git branch feature/$1
-    git checkout feature/$1
-    git push -u origin feature/$1
+    git checkout -b $1
+    git push -u origin $1
   fi
 }
 
