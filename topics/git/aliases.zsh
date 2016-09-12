@@ -24,7 +24,7 @@ alias ggv=fnGitLogVerbose
 alias gl='git pull'
 alias gh='git push'
 alias ghf=fnGitPushForce
-alias gpr='open $(hub pull-request -m $1)'
+alias gpr=fnGitPullRequest
 alias gs='git status -sb'
 alias gt='git stash'
 alias gta='git stash apply'
@@ -34,6 +34,10 @@ alias gaec='git add . && git rebase --continue'
 alias ges='git rebase --skip'
 alias gei=fnGitRebaseInteractive
 alias clean-ignored=fnCleanGitIgnored
+
+fnGitPullRequest() {
+  open $(hub pull-request -m $1)
+}
 
 fnCleanGitIgnored() {
   if [[ ! -e ".gitignore" ]] then
