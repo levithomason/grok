@@ -196,7 +196,7 @@ fnGitPrune() {
 
 fnGitBranch() {
   if (( $# == 0 )) then
-    git branch --all
+    git branch
   else
     git pull
     git checkout -b $1
@@ -206,7 +206,7 @@ fnGitBranch() {
 
 fnGitBranchMaster() {
   if (( $# == 0 )) then
-    git branch -a
+    git branch
   else
     git checkout master
     git pull
