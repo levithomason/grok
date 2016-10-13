@@ -31,6 +31,8 @@ defaults write com.apple.dock persistent-apps -array ""
 defaults write com.apple.dock launchanim -bool false
 
 # Speed up Mission Control animations
+# Borked on Sierra >:(
+# https://github.com/mathiasbynens/dotfiles/issues/711
 defaults write com.apple.dock expose-animation-duration -float 0.2
 
 # Don’t group windows by application in Mission Control
