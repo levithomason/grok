@@ -36,7 +36,14 @@ alias gei=fnGitRebaseInteractive
 alias clean-ignored=fnCleanGitIgnored
 
 fnGitPullRequest() {
-  open $(hub pull-request -m $1)
+  if [[ $1 == "" ]]; then
+    local last_commit_message=$(git log -1 --pretty=%B)
+    local title=${last_commit_message//'\n'}
+  else
+    local title=$1
+  fi
+
+  open $(hub pull-request -m "$title")
 }
 
 fnCleanGitIgnored() {
