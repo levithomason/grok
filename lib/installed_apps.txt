@@ -1,7 +1,6 @@
 1password
 dropbox
 flux
-gitify
 google-chrome
 google-drive
 heroku-toolbelt
