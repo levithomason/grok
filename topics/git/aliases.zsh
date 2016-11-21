@@ -159,10 +159,17 @@ fnGitPrune() {
   fi
 
   # trim fetched to match remotes
-  git pull --prune
+  git fetch --prune
 
-  #                    +merged branches      -current       -specific
-  branches_to_delete=$(git branch --merged | grep -v "\*" | egrep -v "master")
+  # We just pruned remote tracking branches, get a list of local branches are missing remotes
+  #
+  # get remote branches
+  # print branch name only
+  # get verbose branch info
+  # remove the current branch
+  # filter by branches with a remote tracking branch that does not exist on remote
+  # print only their branch names
+  branches_to_delete=$(git branch --remote | awk '{print $1}' | git branch -vv | grep -v "\*" | grep ": gone]" | awk '{print $1}')
 
   # array from lines
   branches_to_delete=("${(f)branches_to_delete}")
@@ -170,10 +177,10 @@ fnGitPrune() {
   if [[ -z $branches_to_delete ]] then
     echo "All clean."
   else
-    echo "\nBranches already merged into current branch:"
+    echo "\nBranches with missing remote tracking branches:"
     # list branches
     for branch in $branches_to_delete; do
-      echo "$branch"
+      echo "- $branch"
     done
 
     echo ""
@@ -184,7 +191,7 @@ fnGitPrune() {
       then
         # delete branches
         for branch in $branches_to_delete; do
-          git branch -d ${branch// /}
+          git branch -D ${branch// /}
         done
 
       else
