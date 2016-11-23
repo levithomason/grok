@@ -159,7 +159,7 @@ fnGitPrune() {
   fi
 
   # trim fetched to match remotes
-  git fetch --prune
+  git pull --prune
 
   # We just pruned remote tracking branches, get a list of local branches are missing remotes
   #
