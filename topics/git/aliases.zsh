@@ -22,6 +22,7 @@ alias gn=fnGitPrune
 alias gg=fnGitLog
 alias ggv=fnGitLogVerbose
 alias gl='git pull'
+alias gln='git pull && fnGitPrune'
 alias gh='git push'
 alias ghf=fnGitPushForce
 alias gpr=fnGitPullRequest
