@@ -1,9 +1,10 @@
+aspcud
 autoconf
+camlp4
 cask
+clasp
 codeclimate
 coreutils
-docker
-docker-machine
 docker-machine-driver-xhyve
 docker-machine-nfs
 elixir
@@ -14,9 +15,11 @@ git
 gnupg
 go
 grc
+gringo
 heroku
 hub
 jpeg
+libev
 libevent
 libpng
 libtiff
@@ -25,6 +28,9 @@ mercurial
 mongodb
 node
 nvm
+ocaml
+ocamlbuild
+opam
 openssl
 pkg-config
 python
