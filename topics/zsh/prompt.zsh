@@ -42,7 +42,7 @@ need_push () {
   then
     echo " "
   else
-    echo " with %{$fg_bold[magenta]%}unpushed%{$reset_color%} "
+    echo " with %{$fg_bold[magenta]%}unpushed%{$reset_color%}"
   fi
 }
 
@@ -75,11 +75,8 @@ directory_name() {
 venv_prompt() {
   if ! [[ -z ${VIRTUAL_ENV} ]]; then
     local env=$(basename $VIRTUAL_ENV)
-  else
-    local env="sys"
+    echo "%{$fg[green]%}[$env]%{$reset_color%} "
   fi
-
-  echo "%{$fg[white]%}[py $env]%{$reset_color%} "
 }
 
 node_prompt() {
@@ -91,7 +88,7 @@ node_prompt() {
 }
 
 set_prompt () {
-  export PROMPT=$'\nin $(directory_name) $(git_dirty)$(need_push)\n› '
+  export PROMPT=$'\n$(venv_prompt)in $(directory_name) $(git_dirty)$(need_push)\n› '
 
   # getting versions is terribly slow
   # export RPROMPT="$(node_prompt)$(rb_prompt)$(venv_prompt)"
