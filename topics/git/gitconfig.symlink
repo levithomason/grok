@@ -1,5 +1,5 @@
 [hub]
-        protocol = https
+	protocol = ssh
 [user]
         name = Levi Thomason
         email = me@levithomason.com
