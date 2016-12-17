@@ -10,10 +10,10 @@ alias gol=fnGitCheckoutPull
 alias gc=fnGitCommit
 alias gch=fnGitCommitPush
 alias gach=fnGitAddCommitPush
-alias gca='git commit --amend'
-alias gcan='git commit --amend --no-edit'
-alias gaca='git add -A && git commit --amend'
-alias gacan='git add -A && git commit --amend --no-edit'
+alias gca='git commit -n --amend'
+alias gcan='git commit -n --amend --no-edit'
+alias gaca='git add -A && git commit -n --amend'
+alias gacan='git add -A && git commit -n --amend --no-edit'
 alias gcp='git cherry-pick'
 alias gi='git diff'
 alias gf='git fetch --all'
@@ -350,7 +350,7 @@ fnGitCommit() {
   if (( $# == 0 )) then
     echo "commit what sucka?!"
   else
-    git commit -S -m "$1"
+    git commit -n -S -m "$1"
   fi
 }
 
