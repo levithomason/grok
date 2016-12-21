@@ -127,7 +127,7 @@ fnGitReset() {
     git status -s
 
     echo ""
-    read -q "CONFIRM?PERMANENTLY loose uncommitted changes above? (y/N) "
+    read -q "CONFIRM?PERMANENTLY lose uncommitted changes above? (y/N) "
 
     if [[ $CONFIRM == "y" ]] then
       echo ""
