@@ -11,10 +11,14 @@ docker-machine-nfs
 elixir
 emacs
 erlang
+fontconfig
+freetype
+gd
 gdbm
 git
 gnupg
 go
+graphviz
 grc
 gringo
 heroku
@@ -24,6 +28,7 @@ libev
 libevent
 libpng
 libtiff
+libtool
 makedepend
 mercurial
 mongodb
@@ -44,6 +49,7 @@ spark
 sqlite
 tmux
 utf8proc
+webp
 wxmac
 xhyve
 xz
