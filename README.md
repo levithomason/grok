@@ -79,7 +79,7 @@ See `/topics/webstorm/` for how I sync them with DropBox.
 ## Learn More
 
 ### ~/.grokfiles...
-Everything lives here.  You're original `~/.*` files are symlinked here, too.
+Everything lives here.  Your original `~/.*` files are symlinked here, too.
 
 Grok organizes dotfiles by topic. Think of a topic as a domain where files are 
 loaded in sane order:
