@@ -45,7 +45,13 @@ fnGitPullRequest() {
     local title=$1
   fi
 
-  open $(hub pull-request -m "$title")
+  if [[ $2 == "" ]]; then
+    local base_branch="master"
+  else
+    local base_branch=$2
+  fi
+
+  open $(hub pull-request -m "$title" -b "$base_branch")
 }
 
 fnCleanGitIgnored() {
@@ -120,7 +126,7 @@ fnGitReset() {
   uncommitted_changes=($(git status -s))
 
   if (( ${#uncommitted_changes[@]} == 0 )) then
-    git reset --hard
+    git reset --hard $(fnGitUpstream)
   else
     echo ""
     echo "Uncommited chagnes:"
