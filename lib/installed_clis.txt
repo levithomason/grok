@@ -23,6 +23,7 @@ grc
 gringo
 heroku
 hub
+icu4c
 jpeg
 libev
 libevent
@@ -53,3 +54,4 @@ webp
 wxmac
 xhyve
 xz
+yarn
