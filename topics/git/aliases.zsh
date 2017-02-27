@@ -31,9 +31,10 @@ alias gs='git status -sb'
 alias gt='git stash'
 alias gta='git stash apply'
 alias ge=fnGitRebase
+alias gea='git rebase --abort'
 alias gec='git rebase --continue'
-alias gaec='git add . && git rebase --continue'
 alias ges='git rebase --skip'
+alias gaec='git add . && git rebase --continue'
 alias gei=fnGitRebaseInteractive
 alias clean-ignored=fnCleanGitIgnored
 
