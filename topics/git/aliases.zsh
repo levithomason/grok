@@ -160,25 +160,21 @@ fnGitPrune() {
     return false
   fi
 
-  if [[ $1 != "" ]] then
-    # save current branch
-    original_branch=$(fnGitCurrentBranch);
+  # save current branch
+  original_branch=$(fnGitCurrentBranch);
 
-    git checkout $1;
-  fi
+  git checkout master
 
   # trim fetched to match remotes
   git pull --prune
 
   # We just pruned remote tracking branches, get a list of local branches are missing remotes
   #
-  # get remote branches
-  # print branch name only
   # get verbose branch info
   # remove the current branch
   # filter by branches with a remote tracking branch that does not exist on remote
   # print only their branch names
-  branches_to_delete=$(git branch --remote | awk '{print $1}' | git branch -vv | grep -v "\*" | grep ": gone]" | awk '{print $1}')
+  branches_to_delete=$(git branch -vv | grep -v "\*" | grep ": gone]" | awk '{print $1}')
 
   # array from lines
   branches_to_delete=("${(f)branches_to_delete}")
@@ -208,11 +204,8 @@ fnGitPrune() {
     fi
   fi
 
-  # if we switched branches, checkout the original
-  if [[ -n $original_branch ]] then
-    git checkout $original_branch
-    unset original_branch
-  fi
+  git checkout $original_branch
+  unset original_branch
 
   unset branches_to_delete
 }
