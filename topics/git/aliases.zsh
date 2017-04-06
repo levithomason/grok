@@ -46,9 +46,7 @@ fnGitPullRequest() {
     local title=$1
   fi
 
-  if [[ $2 == "" ]]; then
-    local base_branch="master"
-  else
+  if [[ $2 != "" ]]; then
     local base_branch=$2
   fi
 
