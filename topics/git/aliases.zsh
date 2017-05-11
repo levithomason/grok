@@ -348,7 +348,7 @@ fnGitCommit() {
   if (( $# == 0 )) then
     echo "commit what sucka?!"
   else
-    git commit -n -S -m "$1"
+    git commit -n -m "$1"
   fi
 }
 
