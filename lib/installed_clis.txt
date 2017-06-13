@@ -32,6 +32,7 @@ libtiff
 libtool
 makedepend
 mercurial
+mitmproxy
 mongodb
 node
 nvm
@@ -39,7 +40,9 @@ ocaml
 ocamlbuild
 opam
 openssl
+openssl@1.1
 pkg-config
+protobuf
 python
 python3
 rbenv
