@@ -34,6 +34,6 @@
         renames = 0
         renameLimit = 9999
 [url "ssh://git@bitbucket.org/"]
-	insteadOf = https://bitbucket.org/
+        insteadOf = https://bitbucket.org/
 [url "ssh://git@github.com/"]
-	insteadOf = https://github.com/
+        insteadOf = https://github.com/
