@@ -11,6 +11,7 @@ alias gc=fnGitCommit
 alias gch=fnGitCommitPush
 alias gach=fnGitAddCommitPush
 alias gca='git commit --amend'
+alias gcam='git commit --amend --message'
 alias gcan='git commit --amend --no-edit'
 alias gaca='git add -A && git commit --amend'
 alias gacan='git add -A && git commit --amend --no-edit'
