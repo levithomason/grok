@@ -41,6 +41,7 @@ ocamlbuild
 opam
 openssl
 openssl@1.1
+pcre
 pkg-config
 protobuf
 python
@@ -53,6 +54,7 @@ spark
 sqlite
 tmux
 utf8proc
+watchman
 webp
 wxmac
 xhyve
