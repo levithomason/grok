@@ -17,6 +17,7 @@ alias gaca='git add -A && git commit --amend'
 alias gacan='git add -A && git commit --amend --no-edit'
 alias gcp='git cherry-pick'
 alias gi='git diff'
+alias giw='git diff --word-diff'
 alias gf='git fetch --all'
 alias gr=fnGitReset
 alias gm=fnGitMerge
