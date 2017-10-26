@@ -4,10 +4,10 @@ dropbox
 flux
 google-chrome
 google-drive
-heroku-toolbelt (!)
+heroku-toolbelt
 iterm2
 java
-node (!)
+node
 quicksilver
 slack
 spectacle
