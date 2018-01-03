@@ -13,7 +13,7 @@ install_grokfiles() {
   echo ""
   echo "... cloning grokfiles"
   echo ""
-  git clone git@github.com:levithomason/grokfiles.git $grok_dir
+  git clone https://github.com/levithomason/grok.git $grok_dir
 
   echo ""
   echo "... bootstraping grokfiles"
