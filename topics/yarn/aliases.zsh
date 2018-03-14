@@ -1,6 +1,7 @@
 alias yi='yarn install'
 alias ya='yarn add $1'
 alias yad='yarn add $1 --save-dev'
+alias yd='yarn dev'
 alias yr='yarn remove'
 alias ys='yarn start'
 alias ysw='yarn start:watch'
