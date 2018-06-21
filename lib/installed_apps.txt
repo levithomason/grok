@@ -1,14 +1,2 @@
-1password
-cuda
-dropbox
-flux
-google-chrome
-google-drive
-heroku-toolbelt
-iterm2
 java
-node
-quicksilver
 slack
-spectacle
-webstorm
