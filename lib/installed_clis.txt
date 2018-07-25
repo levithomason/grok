@@ -11,6 +11,7 @@ emacs
 erlang
 fontconfig
 freetype
+fzf
 gd
 gdbm
 gettext
@@ -58,6 +59,7 @@ pkg-config
 protobuf
 python
 python3
+python@2
 rbenv
 readline
 redis
