@@ -28,8 +28,8 @@ done
 
 for app in "Activity Monitor" "Address Book" "Calendar" "Contacts" "cfprefsd" \
   "Dock" "Finder" "Mail" "Messages" "Safari" "SizeUp" "SystemUIServer" \
-  "Terminal" "Transmission" "Twitter" "iCal"; do
+  "Transmission" "Twitter" "iCal"; do
   echo "... restarting $app"
   killall "${app}" > /dev/null 2>&1
 done
-echo "... Done. Logout/restart to finish."
+echo "... Done. Kill Terminal and logout/restart to finish."
