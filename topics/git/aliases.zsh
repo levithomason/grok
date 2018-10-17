@@ -32,6 +32,7 @@ alias gpr=fnGitPullRequest
 alias gs='git status -sb'
 alias gt='git stash save'
 alias gta='git stash apply'
+alias gu='git reset HEAD~'
 alias ge=fnGitRebase
 alias gea='git rebase --abort'
 alias gec='git rebase --continue'
