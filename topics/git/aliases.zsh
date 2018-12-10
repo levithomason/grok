@@ -10,6 +10,7 @@ alias gol=fnGitCheckoutPull
 alias gc=fnGitCommit
 alias gch=fnGitCommitPush
 alias gach=fnGitAddCommitPush
+alias guh="git log --branches --not --remotes --no-walk --decorate --oneline"
 alias gca='git commit --amend'
 alias gcam='git commit --amend --message'
 alias gcan='git commit --amend --no-edit'
