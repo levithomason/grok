@@ -5,7 +5,7 @@ original_dir=$(pwd)
 
 rm -rf ~/.nvm
 git clone https://github.com/creationix/nvm.git ~/.nvm && cd $_
-git checkout v0.33.2
+git checkout v0.33.11
 
 cd ${original_dir}
 unset original_dir
