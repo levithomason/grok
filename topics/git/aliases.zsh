@@ -10,6 +10,9 @@ alias gol=fnGitCheckoutPull
 alias gc=fnGitCommit
 alias gch=fnGitCommitPush
 alias gach=fnGitAddCommitPush
+alias gcn=fnGitCommitNoVerify
+alias gchn=fnGitCommitPushNoVerify
+alias gachn=fnGitAddCommitPushNoVerify
 alias guh="git log --branches --not --remotes --no-walk --decorate --oneline"
 alias gca='git commit --amend'
 alias gcam='git commit --amend --message'
@@ -356,6 +359,14 @@ fnGitCommit() {
   fi
 }
 
+fnGitCommitNoVerify() {
+  if (( $# == 0 )) then
+    echo "commit what sucka?!"
+  else
+    git commit -n -m "$1"
+  fi
+}
+
 fnGitAddCommitPush() {
   if (( $# == 0 )) then
     echo "commit message?"
@@ -365,11 +376,29 @@ fnGitAddCommitPush() {
   fi
 }
 
+fnGitAddCommitPushNoVerify() {
+  if (( $# == 0 )) then
+    echo "commit message?"
+  else
+    fnGitAdd
+    fnGitCommitPushNoVreify $1
+  fi
+}
+
 fnGitCommitPush() {
   if (( $# == 0 )) then
     echo "commit what sucka?!"
   else
     fnGitCommit $1
+    git push
+  fi
+}
+
+fnGitCommitPushNoVreify() {
+  if (( $# == 0 )) then
+    echo "commit what sucka?!"
+  else
+    fnGitCommitNoVerify $1
     git push
   fi
 }
