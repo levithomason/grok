@@ -2,3 +2,4 @@
 *~
 *.swp
 .idea/
+report.20*.json # node build failure reports
