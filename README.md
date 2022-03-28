@@ -133,19 +133,3 @@ Take a look at the a couple for an example.
 
 This is everything grok needs to run.  Scripts that are needed throughout Grok
 are placed here. It'd be a good idea to understand what these are doing.
-
-## Road Map
-- break out osx settings and use some.
-- ~~better organized docs!~~
-- change topics to modules and give quick start:
-    - how they work
-    - creating a module
-- ~~consistent logging, replace all `GROK:` logs.~~
-- formalize a `grok` sync folder with prompt for Google Drive / DropBox
-- ~~finish refactor naming to Grok~~
-- flatten structure for easy of understanding, prefix non-module folders `_`
-- grok cli
-  - ~~update (pull changes, run)~~
-  - ~~search/install/uninstall desktop app (alias brew cask, record changes)~~
-  - edit (open project in $EDITOR, replace system alias `odot`)
-- convert scripts to zsh

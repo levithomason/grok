@@ -28,7 +28,7 @@ done
 
 for app in "Activity Monitor" "Address Book" "Calendar" "Contacts" "cfprefsd" \
   "Dock" "Finder" "Mail" "Messages" "Safari" "SizeUp" "SystemUIServer" \
-  "Transmission" "Twitter" "iCal"; do
+  "Transmission" "iCal"; do
   echo "... restarting $app"
   killall "${app}" > /dev/null 2>&1
 done

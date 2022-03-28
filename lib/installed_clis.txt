@@ -22,7 +22,6 @@ gnutls
 go
 graphviz
 grc
-heroku
 hub
 icu4c
 jpeg
@@ -57,10 +56,6 @@ pcre
 pinentry
 pkg-config
 protobuf
-python
-python3
-python@2
-rbenv
 readline
 redis
 ruby-build
