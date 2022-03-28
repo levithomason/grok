@@ -8,7 +8,7 @@ echo "==========================================================================
 echo "  CLI TOOLS"
 echo ""
 echo "    Installed"
-for cli in $(brew list); do
+for cli in $(brew list --formula); do
   echo "      $cli"
 done;
 

@@ -6,11 +6,7 @@
 # using Homebrew.
 
 # Check for Homebrew
-if test ! $(which brew)
-then
-  echo "  Installing Homebrew for you."
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-fi
+. ./install_if_needed.sh
 
 ###############################################################################
 # Keep Healthy
@@ -24,11 +20,7 @@ brew update
 # Grok requirements
 #
 
-brew install \
-  grc \
-  coreutils \
-  spark \
-  caskroom/cask/brew-cask
+brew install --formula grc coreutils spark
 
 
 ###############################################################################

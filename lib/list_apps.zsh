@@ -8,7 +8,7 @@ echo "==========================================================================
 echo "  DESKTOP APPS"
 echo ""
 echo "    Installed"
-for app in $(brew cask list); do
+for app in $(brew list --cask); do
   echo "      $app"
 done;
 

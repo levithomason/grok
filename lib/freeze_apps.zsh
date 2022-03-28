@@ -5,4 +5,4 @@
 #
 
 rm $GROK_LIB/installed_apps.txt
-brew cask list > $GROK_LIB/installed_apps.txt
+brew list --cask > $GROK_LIB/installed_apps.txt

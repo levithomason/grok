@@ -5,4 +5,4 @@
 #
 
 rm $GROK_LIB/installed_clis.txt
-brew list > $GROK_LIB/installed_clis.txt
+brew list --formula > $GROK_LIB/installed_clis.txt
