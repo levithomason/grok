@@ -122,14 +122,14 @@ if [[ $command == "install" || $command == "uninstall" ]] then
   # cli
   if [[ $type == "cli" ]] then
     brew $command --formula $name
-    . $GROK_LIB/freeze_clis.zsh
+    . $GROK_LIB/freeze_clis.zsh $command $name
     prompt_commit_push "$command $type: $name"
   fi
 
   # app
   if [[ $type == "app" ]] then
     brew $command --cask $name
-    . $GROK_LIB/freeze_apps.zsh
+    . $GROK_LIB/freeze_apps.zsh $command $name
     prompt_commit_push "$command $type: $name"
   fi
 
