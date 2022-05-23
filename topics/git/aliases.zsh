@@ -4,7 +4,7 @@ alias gac='fnGitAdd && fnGitCommit'
 alias gb=fnGitBranch
 alias gba='git branch -a'
 alias gd='git branch -D'
-alias gbm=fnGitBranchMaster
+alias gbm=fnGitBranchMain
 alias go=fnGitCheckout
 alias gol=fnGitCheckoutPull
 alias gc=fnGitCommit
@@ -44,6 +44,31 @@ alias ges='git rebase --skip'
 alias gaec='git add . && git rebase --continue'
 alias gei=fnGitRebaseInteractive
 alias clean-ignored=fnCleanGitIgnored
+
+fnTrunkName() {
+  # First check locally
+  if [[ ! -z $(git branch --list "master") ]]; then
+    echo "master"
+  else
+    if [[ ! -z $(git branch --list "main") ]]; then
+      echo "main"
+    else
+
+      # ! WARNING SLOW ! :(
+      # Finally check remote
+      if [[ ! -z $(git ls-remote --heads origin "master") ]]; then
+        echo "master"
+      else
+        if [[ ! -z $(git ls-remote --heads origin "main") ]]; then
+          echo "main"
+        else
+          echo "fnTrunkName could not resolve trunk name"
+          exit 1
+        fi
+      fi
+    fi
+  fi
+}
 
 fnGitPullRequest() {
   if [[ $1 == "" ]]; then
@@ -108,8 +133,8 @@ fnGitPushForce() {
 fnGitRebase() {
   if [[ $1 == "" ]]; then
     git fetch origin
-    echo "rebasing to master by default"
-    git rebase origin/master
+    echo "rebasing to ${fnTrunkName} by default"
+    git rebase origin/$(fnTrunkName)
   else
     git fetch -a
     git rebase $1
@@ -118,9 +143,9 @@ fnGitRebase() {
 
 fnGitRebaseInteractive() {
   if [[ $1 == "" ]]; then
-    echo "rebasing from master by default"
+    echo "rebasing from ${fnTrunkName} by default"
     git fetch origin
-    git rebase -i $(git merge-base $(fnGitCurrentBranch) origin/master)
+    git rebase -i $(git merge-base $(fnGitCurrentBranch) origin/$(fnTrunkName))
   else
     git fetch -a
     git rebase -i $(git merge-base $(fnGitCurrentBranch) $1)
@@ -168,7 +193,7 @@ fnGitPrune() {
   # save current branch
   original_branch=$(fnGitCurrentBranch);
 
-  git checkout master
+  git checkout $(fnTrunkName)
 
   # trim fetched to match remotes
   git pull --prune
@@ -225,11 +250,11 @@ fnGitBranch() {
   fi
 }
 
-fnGitBranchMaster() {
+fnGitBranchMain() {
   if (( $# == 0 )) then
     git branch
   else
-    git checkout master
+    git checkout $(fnTrunkName)
     git pull
     git checkout -b $1
     git push -u origin $1
@@ -267,7 +292,7 @@ fnGitCheckout() {
       # turn list of branches into something we can "git checkout"
       #
       # INPUT                           OUTPUT
-      # 'refs/heads/master'             master
+      # 'refs/heads/main'               main
       # 'refs/remotes/origin/gh-pages'  origin gh-pages
       # 'refs/remotes/foo/feature/foo'  foo feature/bar
 
@@ -409,13 +434,13 @@ fnGitMerge() {
     original_branch=$(git branch | grep "* ");
     original_branch=${original_branch/"* "};
 
-    # update master
-    git checkout master
+    # update trunk
+    git checkout $(fnTrunkName)
     git pull
 
     # merge into original branch
     git checkout $original_branch
-    git merge master
+    git merge $(fnTrunkName)
 
     unset original_branch
   else
