@@ -3,3 +3,4 @@ hub
 node
 nvm
 yarn
+tree
