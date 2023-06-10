@@ -8,6 +8,7 @@
         co = checkout
         promote = !$GROK_BIN/git-promote
         count   = !git shortlog -sn
+        history = log --pretty=format:\"%an <%ae> %ad\" --date=format:'%Y-%m-%d' --follow
 [color]
         diff = auto
         status = auto
