@@ -6,9 +6,9 @@
         signingkey = 4D4B1AF3
 [alias]
         co = checkout
-        promote = !$GROK_BIN/git-promote
-        count   = !git shortlog -sn
-        history = log --pretty=format:\"%an <%ae> %ad\" --date=format:'%Y-%m-%d' --follow
+        promote = "!$GROK_BIN/git-promote"
+        count = "!git shortlog -sn"
+        history = "log --pretty=format:'%ad - %an - %s' --date=format:'%Y-%m-%d' --follow"
 [color]
         diff = auto
         status = auto

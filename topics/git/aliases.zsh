@@ -44,6 +44,11 @@ alias ges='git rebase --skip'
 alias gaec='git add . && git rebase --continue'
 alias gei=fnGitRebaseInteractive
 alias clean-ignored=fnCleanGitIgnored
+alias git-changes-with=fnGitChangesWith
+
+fnGitChangesWith() {
+  git log --pretty="%H" --follow $1 | xargs -I {} git diff-tree --no-commit-id --name-only -r {} | sort | uniq -c | sort -n
+}
 
 fnTrunkName() {
   # First check locally
