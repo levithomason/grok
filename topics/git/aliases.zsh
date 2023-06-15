@@ -45,6 +45,11 @@ alias gaec='git add . && git rebase --continue'
 alias gei=fnGitRebaseInteractive
 alias clean-ignored=fnCleanGitIgnored
 alias git-changes-with=fnGitChangesWith
+alias git-contributors=fnGitContributors
+
+fnGitContributors() {
+  git log --pretty=format:'%an' --date=format:'%Y-%m-%d' --follow $1 | sort | uniq -c | sort
+}
 
 fnGitChangesWith() {
   git log --pretty="%H" --follow $1 | xargs -I {} git diff-tree --no-commit-id --name-only -r {} | sort | uniq -c | sort -n
