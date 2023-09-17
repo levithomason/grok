@@ -6,7 +6,7 @@
 # using Homebrew.
 
 # Check for Homebrew
-. ./install_if_needed.sh
+. $GROK_TOPICS/homebrew/install_if_needed.sh
 
 ###############################################################################
 # Keep Healthy

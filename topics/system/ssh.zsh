@@ -3,8 +3,6 @@
 # example:
 # ~/.ssh/identity.github.levithomason
 
-echo "... adding ~/.ssh identities"
-
 # start agent
 eval `ssh-agent -s` > /dev/null 2>&1
 

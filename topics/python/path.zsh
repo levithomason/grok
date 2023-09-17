@@ -3,7 +3,6 @@
 # export PATH="/Library/Frameworks/Python.framework/Versions/3.8/bin:${PATH}"
 
 export PATH="/Users/levithomason/Library/Python/3.9/bin:$PATH"
-export VIRTUAL_ENV="/Users/levithomason/src/"
 
 # https://github.com/psycopg/psycopg2/issues/1200#issuecomment-934861409
 # Supposedly fixes yieldnodes_legal error on sign in:
