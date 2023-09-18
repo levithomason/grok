@@ -17,6 +17,8 @@
 [core]
         editor = vim
         excludesfile = ~/.gitignore
+	untrackedCache = true
+	fsmonitor = true
 [apply]
         whitespace = nowarn
 [mergetool]

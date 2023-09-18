@@ -34,7 +34,7 @@ git_branch () {
 }
 
 git_dirty_prompt() {
-  if git diff --quiet && git diff --cached --quiet; then
+  if [[ -z "$($git status --porcelain 2>/dev/null)" ]]; then
     # Working directory clean
     echo " on %{$fg_bold[green]%}$(git_branch)%{$reset_color%}"
   else
