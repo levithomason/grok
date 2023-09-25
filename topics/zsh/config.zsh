@@ -12,19 +12,47 @@ export CLICOLOR=true
 #
 # http://zsh.sourceforge.net/Doc/Release/Functions.html
 
-# add dotfiles functions
-fpath=($GROK_FUNCTIONS $fpath)
+# compinit caches completions in ~/.zcompdump based on the contents of $fpath
+# when reloading the shell, we need to only add new directories to $fpath
+typeset -A seen_dirs
+for dir in "${fpath[@]}"; do
+  seen_dirs[$dir]=1
+done
 
-# add topic folders to define functions and completions in topic folders
-for topic_folder ($GROK_TOPICS/*); do
-  if [ -d $topic_folder ]; then
-    fpath=($topic_folder $fpath);
-  fi;
+# remove directories from fpath if they no longer exist
+clean_fpath() {
+  local new_fpath=()
+  for dir in "${fpath[@]}"; do
+    if [[ -d $dir ]]; then
+      new_fpath+=("$dir")
+    else
+      unset "seen_dirs[$dir]"
+    fi
+  done
+  fpath=("${new_fpath[@]}")
+}
+
+# add a new directory to fpath if it's a dir and not already there
+add_to_fpath_if_needed() {
+  local dir="$1"
+  if [[ -z $seen_dirs[$dir] && -d $dir ]]; then
+    fpath+=("$dir")
+    seen_dirs[$dir]=1
+  fi
+}
+
+# add grok directories to fpath
+add_to_fpath_if_needed $GROK_FUNCTIONS
+
+for topic_folder in "$GROK_TOPICS"/*; do
+  if [[ -d $topic_folder ]]; then
+    add_to_fpath_if_needed "$topic_folder"
+  fi
 done
 
 # init completion here, otherwise topic functions won't be loaded
 autoload -U compinit
-compinit
+compinit # this should now be fast in reloading since we have a stable fpath
 
 autoload -U $GROK_FUNCTIONS/*(:t)
 

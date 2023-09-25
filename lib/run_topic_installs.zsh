@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-echo 'GROK: run_topic_installs'
+[[ -n $GROK_DEBUG ]] && echo 'GROK: run_topic_installs'
 
 ###############################################################################
 # DEFINE INSTALL FUNCTIONS

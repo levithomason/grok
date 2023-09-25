@@ -5,7 +5,7 @@
 #
 # These are private values used internally, best to leave them as is.
 
-echo 'GROK: set_env_variables'
+[[ -n $GROK_DEBUG ]] && echo 'GROK: set_env_variables'
 
 export GROK_ROOT=$HOME/.grokfiles
 export GROK_TOPICS=$GROK_ROOT/topics

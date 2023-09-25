@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-echo 'GROK: updating'
+[[ -n $GROK_DEBUG ]] && echo 'GROK: updating'
 
 ###############################################################################
 # UPDATE

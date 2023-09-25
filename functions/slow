@@ -1,0 +1,7 @@
+start_time=$(gdate +%s%3N)
+
+"$@" > /dev/null
+
+end_time=$(gdate +%s%3N)
+elapsed_time=$((end_time - start_time))
+echo "$elapsed_time"
