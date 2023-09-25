@@ -28,7 +28,7 @@ run_file() {
   local rel_file="${file/${GROK_ROOT}\/topics\//}"
 
   print_file() {
-    local padded_time=$(printf "%7s" "${elapsed_time}ms")
+    local padded_time=$(printf "%-7s" "${elapsed_time}ms")
     # Print the time taken to run the file and the file name
     print -n -P -- "%F{$color}${padded_time} ${rel_file}%f"
   }
