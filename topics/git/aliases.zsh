@@ -254,7 +254,6 @@ fnGitBranch() {
   if (( $# == 0 )) then
     git branch
   else
-    git pull
     git checkout -b $1
     git push -u origin $1
   fi
