@@ -45,12 +45,12 @@ run_file() {
     slow_files+=("$(print_file)")
   elif [[ $elapsed_time -gt 250 ]]; then
     color="3" # yellow
-    slow_files+=("$(print_file)")
     print_dot
+    slow_files+=("$(print_file)")
   elif [[ $elapsed_time -gt 100 ]]; then
     color="7" # somewhat dim
-    slow_files+=("$(print_file)")
     print_dot
+    slow_files+=("$(print_file)")
   else
     color="8" # very dim
     print_dot
