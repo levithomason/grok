@@ -145,14 +145,22 @@ fnGitPushForce() {
 }
 
 fnGitRebase() {
-  if [[ $1 == "" ]]; then
-    git fetch $(fnGitRemoteName)
-    echo "rebasing to ${fnGitTrunkName} by default"
-    git rebase $(fnGitRemoteName)/$(fnGitTrunkName)
-  else
-    git fetch -a
-    git rebase $1
+  local target=${1:-"$(fnGitRemoteName)/$(fnGitTrunkName)"}
+
+  # confirm rebase target
+  echo ""
+  echo "  git fetch $target"
+  echo "  git rebase $target"
+  echo ""
+  read -q "CONFIRM?Go? (y/N) "
+  echo ""
+
+  if [[ $CONFIRM != "y" ]]; then
+    return false
   fi
+
+  echo git fetch $target
+  echo git rebase $target
 }
 
 fnGitRebaseInteractive() {

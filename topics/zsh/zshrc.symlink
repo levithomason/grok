@@ -1,3 +1,4 @@
+
 ##############################################################################
 # ZSH
 #
@@ -23,3 +24,5 @@ _sgpt_zsh() {
 zle -N _sgpt_zsh
 bindkey ^l _sgpt_zsh
 # Shell-GPT integration ZSH v0.1
+
+source ~/.torusrc
