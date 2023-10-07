@@ -3,8 +3,10 @@
 # example:
 # ~/.ssh/identity.github.levithomason
 
-# start agent
-eval `ssh-agent -s` > /dev/null 2>&1
+# start agent if not already running
+if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+  eval `ssh-agent -s` > /dev/null 2>&1
+fi
 
 # add all keys
 for key in $(ls ~/.ssh/ | grep identity | grep -v \.pub$); do
