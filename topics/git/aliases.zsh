@@ -145,12 +145,9 @@ fnGitPushForce() {
 }
 
 fnGitRebase() {
-  local target=${1:-"$(fnGitRemoteName)/$(fnGitTrunkName)"}
-
-  # confirm rebase target
   echo ""
-  echo "  git fetch $target"
-  echo "  git rebase $target"
+  echo "  git fetch $(fnGitRemoteName) $(fnGitTrunkName)"
+  echo "  git rebase $(fnGitRemoteName)/$(fnGitTrunkName)"
   echo ""
   read -q "CONFIRM?Go? (y/N) "
   echo ""
@@ -159,8 +156,8 @@ fnGitRebase() {
     return false
   fi
 
-  echo git fetch $target
-  echo git rebase $target
+  git fetch $(fnGitRemoteName) $(fnGitTrunkName)
+  git rebase $(fnGitRemoteName)/$(fnGitTrunkName)
 }
 
 fnGitRebaseInteractive() {
