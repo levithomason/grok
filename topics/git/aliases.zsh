@@ -1,3 +1,4 @@
+alias cdgr='cd `git rev-parse --show-toplevel`'
 alias ga=fnGitAdd
 alias gap='git add -p'
 alias gac='fnGitAdd && fnGitCommit'
