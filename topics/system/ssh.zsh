@@ -8,6 +8,9 @@ if ! pgrep -u "$USER" ssh-agent > /dev/null; then
   eval `ssh-agent -s` > /dev/null 2>&1
 fi
 
+# remove all keys first
+ssh-add -D > /dev/null 2>&1
+
 # add all keys
 for key in $(ls ~/.ssh/ | grep identity | grep -v \.pub$); do
   ssh-add ~/.ssh/$key > /dev/null 2>&1
