@@ -12,17 +12,5 @@
 . $HOME/.grokfiles/lib/set_env_variables.sh
 . $HOME/.grokfiles/lib/run_topic_zsh_files.zsh
 
-# Shell-GPT integration ZSH v0.1
-# https://github.com/TheR1D/shell_gpt#shell-integration
-_sgpt_zsh() {
-    _sgpt_prev_cmd=$BUFFER
-    BUFFER+="⌛"
-    zle -I && zle redisplay
-    BUFFER=$(sgpt --shell <<< "$_sgpt_prev_cmd")
-    zle end-of-line
-}
-zle -N _sgpt_zsh
-bindkey ^l _sgpt_zsh
-# Shell-GPT integration ZSH v0.1
-
 source ~/.torusrc
+
