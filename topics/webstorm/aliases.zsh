@@ -1,1 +1,5 @@
-alias ws="open -a /Applications/WebStorm.app"
+alias ws=fnWebStorm
+
+fnWebStorm() {
+  open -na "WebStorm.app" --args "$@"
+}
