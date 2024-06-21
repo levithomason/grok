@@ -1,6 +1,6 @@
+gh
 git
-hub
 node
 nvm
-yarn
 tree
+yarn
