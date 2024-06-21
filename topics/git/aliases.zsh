@@ -31,8 +31,8 @@ alias gg=fnGitLog
 alias ggv=fnGitLogVerbose
 alias gl='git pull'
 alias gln='git pull && fnGitPrune'
-alias gh='git push'
-alias ghf=fnGitPushForce
+alias gp='git push'
+alias gpf=fnGitPushForce
 alias gpr=fnGitPullRequest
 alias gs='git status -sb'
 alias gt='git stash save'
@@ -86,18 +86,27 @@ fnGitTrunkName() {
 }
 
 fnGitPullRequest() {
+  local last_commit_message=$(git log -1 --pretty=%B)
+
   if [[ $1 == "" ]]; then
-    local last_commit_message=$(git log -1 --pretty=%B)
     local title=${last_commit_message//'\n'}
   else
-    local title=$1
+    local title="$1"
   fi
 
-  if [[ $2 != "" ]]; then
-    local base_branch=$2
+  if [[ $2 == "" ]]; then
+    local body=${last_commit_message//'\n'}
+  else
+    local body="$2"
   fi
 
-  open $(hub pull-request -m "$title" -b "$base_branch")
+  if [[ $3 != "" ]]; then
+    local base="$3"
+  else
+    local base=$(fnGitTrunkName)
+  fi
+
+  gh pr create --web --title "$title" --body "$body" --base "$base"
 }
 
 fnCleanGitIgnored() {
