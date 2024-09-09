@@ -41,3 +41,5 @@
 [pull]
 	rebase = false
 	merge = only
+[http]
+	postBuffer = 524288000
