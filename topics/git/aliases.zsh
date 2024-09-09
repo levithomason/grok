@@ -8,6 +8,7 @@ alias gd='git branch -D'
 alias gbm=fnGitBranchMain
 alias go=fnGitCheckout
 alias gol=fnGitCheckoutPull
+alias gop='git checkout -'
 alias gc=fnGitCommit
 alias gcp=fnGitCommitPush
 alias gacp=fnGitAddCommitPush
