@@ -57,7 +57,15 @@ fnGitChangesWith() {
 }
 
 fnGitRemoteName() {
-  echo $(git remote show)
+  # Get the remote for the current branch
+  local remote=$(git config --get branch.$(fnGitCurrentBranch).remote)
+
+  # If there is no remote for the current branch, default to "origin"
+  if [[ -z $remote ]]; then
+    echo "origin"
+  else
+    echo $remote
+  fi
 }
 
 fnGitTrunkName() {
@@ -434,7 +442,7 @@ fnGitAddCommitPushNoVerify() {
     echo "commit message?"
   else
     fnGitAdd
-    fnGitCommitPushNoVreify $1
+    fnGitCommitPushNoVerify $1
   fi
 }
 
@@ -447,7 +455,7 @@ fnGitCommitPush() {
   fi
 }
 
-fnGitCommitPushNoVreify() {
+fnGitCommitPushNoVerify() {
   if (( $# == 0 )) then
     echo "commit what sucka?!"
   else
