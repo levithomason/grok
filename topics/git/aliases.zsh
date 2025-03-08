@@ -383,18 +383,16 @@ fnGitCheckout() {
     echo ""
     read "go_input?(query/#): "
 
-    # if input, attempt select branch from array by index
-    if [[ $go_input != "" ]] then
-      go_checkout=$go_matches[$go_input]
-    fi
-
-    # if input did not result in a valid branch index
-    # rerun with input as query against matches
-    if [[ $go_checkout == "" ]] then
+    # Validate input as a number and within range
+    if [[ $go_input =~ ^[0-9]+$ ]] && (( go_input > 0 && go_input <= ${#go_matches[@]} )); then
+      go_checkout=${go_matches[$go_input]}
+    else
+      # If input is not a valid number, treat it as a new query
       fnGitCheckout $go_input $go_matches
       return false
     fi
   fi
+
 
   git checkout ${go_checkout}
 
