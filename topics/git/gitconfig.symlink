@@ -45,3 +45,7 @@
 	postBuffer = 524288000
 [init]
 	defaultBranch = master
+[credential]
+	helper = /usr/local/share/gcm-core/git-credential-manager
+[credential "https://dev.azure.com"]
+	useHttpPath = true
