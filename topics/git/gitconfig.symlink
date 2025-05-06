@@ -15,8 +15,8 @@
 [core]
         editor = vim
         excludesfile = ~/.gitignore
-	untrackedCache = true
-	fsmonitor = true
+        untrackedCache = true
+        fsmonitor = true
 [apply]
         whitespace = nowarn
 [mergetool]
@@ -39,14 +39,18 @@
 [url "ssh://git@github.com/"]
         insteadOf = https://github.com/
 [pull]
-	rebase = false
-	merge = only
+        rebase = false
+        merge = only
 [http]
-	postBuffer = 524288000
+        postBuffer = 524288000
 [init]
-	defaultBranch = master
+        defaultBranch = master
 # Causes infinite redirect loop, launching browser tabs
 # [credential]
-#  	helper = /usr/local/share/gcm-core/git-credential-manager
-#  [credential "https://dev.azure.com"]
-#  	useHttpPath = true
+#     helper =
+#     helper = /usr/local/share/gcm-core/git-credential-manager
+#     azreposCredentialType = oauth
+# [credential "https://dev.azure.com"]
+#     useHttpPath = true
+# [credential "azrepos:org/domoreexp"]
+#     azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47

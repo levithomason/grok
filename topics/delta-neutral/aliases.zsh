@@ -1,0 +1,1 @@
+alias "delta-neutral"="cd ~/src/delta-neutral && nvm use && yarn && yarn start"
