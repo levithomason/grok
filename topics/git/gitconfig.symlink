@@ -29,7 +29,7 @@
         # See `git help config` (search for push.default)
         # for more information on different options of the below setting.
         #
-        # Setting to git 2.0 default to surpress warning message
+        # Setting to git 2.0 default to suppress warning message
         default = simple
 [diff]
         renames = 0
@@ -45,12 +45,12 @@
         postBuffer = 524288000
 [init]
         defaultBranch = master
-# Causes infinite redirect loop, launching browser tabs
-# [credential]
-#     helper =
-#     helper = /usr/local/share/gcm-core/git-credential-manager
-#     azreposCredentialType = oauth
-# [credential "https://dev.azure.com"]
-#     useHttpPath = true
-# [credential "azrepos:org/domoreexp"]
-#     azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
+[credential]
+        helper =
+        helper = /usr/local/share/gcm-core/git-credential-manager
+        azreposCredentialType = oauth
+[credential "https://dev.azure.com"]
+        useHttpPath = true
+[credential "azrepos:org/domoreexp"]
+        azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
+	username = lethoma@microsoft.com
