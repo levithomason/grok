@@ -51,3 +51,9 @@
     azreposCredentialType = oauth
 [credential "azrepos:org/domoreexp"]
 	username = lethoma@microsoft.com
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
