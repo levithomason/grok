@@ -13,6 +13,7 @@ alias gc=fnGitCommit
 alias gcp=fnGitCommitPush
 alias gacp=fnGitAddCommitPush
 alias gcn=fnGitCommitNoVerify
+alias gacn=fnGitAddCommitNoVerify
 alias gcpn=fnGitCommitPushNoVerify
 alias gacpn=fnGitAddCommitPushNoVerify
 alias gup="git log --branches --not --remotes --no-walk --decorate --oneline"
@@ -424,6 +425,11 @@ fnGitCommitNoVerify() {
   else
     git commit -n -m "$1"
   fi
+}
+
+fnGitAddCommitNoVerify() {
+  fnGitAdd
+  fnGitCommitNoVerify $1
 }
 
 fnGitAddCommitPush() {
