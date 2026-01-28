@@ -3,5 +3,11 @@
 *.swp
 .idea/
 
+# Personal Claude settings (allowed terminal commands, etc.)
+.claude/settings.local.json
+
+# codespace heartbeat files in WebStorm
+logs/
+
 # node build failure reports
 report.[0-9]*[0-9].json
