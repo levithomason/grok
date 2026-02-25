@@ -57,3 +57,5 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "azrepos:org/outlookweb"]
+	username = lethoma@microsoft.com

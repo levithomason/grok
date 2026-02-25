@@ -1,0 +1,1 @@
+export PATH="${PATH}:/Users/levithomason/.azureauth/0.9.2"
