@@ -1,35 +1,39 @@
-# nvm init is terribly slow
-# only load nvm when we need it
+# Note, lazy causes issues as globals, which are not accessible until after loading npm.
+# Disabling for now...
+export NVM_SYMLINK_CURRENT=true
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-lazynvm() {
-  unset -f nvm node npm npx yarn
-  export NVM_SYMLINK_CURRENT=true
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-}
-
-nvm() {
-  lazynvm
-  nvm "$@"
-}
-
-node() {
-  lazynvm
-  node "$@"
-}
-
-npm() {
-  lazynvm
-  npm "$@"
-}
-
-npx() {
-  lazynvm
-  npx "$@"
-}
-
-yarn() {
-  lazynvm
-  yarn "$@"
-}
-
+## nvm init is terribly slow
+## only load nvm when we need it
+#
+#lazynvm() {
+#  unset -f nvm node npm npx yarn
+#  export NVM_SYMLINK_CURRENT=true
+#  export NVM_DIR="$HOME/.nvm"
+#  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+#}
+#nvm() {
+#  lazynvm
+#  nvm "$@"
+#}
+#
+#node() {
+#  lazynvm
+#  node "$@"
+#}
+#
+#npm() {
+#  lazynvm
+#  npm "$@"
+#}
+#
+#npx() {
+#  lazynvm
+#  npx "$@"
+#}
+#
+#yarn() {
+#  lazynvm
+#  yarn "$@"
+#}
