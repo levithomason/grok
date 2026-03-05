@@ -13,3 +13,9 @@
 . $HOME/.grokfiles/lib/run_topic_zsh_files.zsh
 
 source ~/.torusrc
+
+# BEGIN RubberDucky MANAGED BLOCK
+if [[ ":${PATH}:" != *":/Users/levithomason/.config/RubberDucky/CurrentVersion:"* ]]; then
+    export PATH="/Users/levithomason/.config/RubberDucky/CurrentVersion:${PATH}"
+fi
+# END RubberDucky MANAGED BLOCK
