@@ -19,3 +19,9 @@ if [[ ":${PATH}:" != *":/Users/levithomason/.config/RubberDucky/CurrentVersion:"
     export PATH="/Users/levithomason/.config/RubberDucky/CurrentVersion:${PATH}"
 fi
 # END RubberDucky MANAGED BLOCK
+
+# BEGIN claude-cli MANAGED BLOCK
+if [[ ":${PATH}:" != *":/Users/levithomason/.claude-cli/CurrentVersion:"* ]]; then
+    export PATH="/Users/levithomason/.claude-cli/CurrentVersion:${PATH}"
+fi
+# END claude-cli MANAGED BLOCK
