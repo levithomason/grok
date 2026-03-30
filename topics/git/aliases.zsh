@@ -228,10 +228,14 @@ fnGitPrune() {
     return false
   fi
 
+  # prune stale worktree entries (directories no longer on disk)
+  # this un-marks branches with + so they become eligible for deletion below
+  git worktree prune
+
   # prune remote tracking branches without switching away from current branch
   git fetch --prune
 
-  # We just pruned remote tracking branches, get a list of local branches are missing remotes
+  # --- Part 1: branches whose remote tracking branch was deleted ---
   #
   # get verbose branch info
   # remove the current branch (marked with *)
@@ -239,15 +243,10 @@ fnGitPrune() {
   # filter by branches with a remote tracking branch that does not exist on remote
   # print only their branch names
   branches_to_delete=$(git branch -vv | grep -v "\*" | grep -v "+" | grep ": gone]" | awk '{print $1}')
-
-  # array from lines
   branches_to_delete=("${(f)branches_to_delete}")
 
-  if [[ -z $branches_to_delete ]] then
-    echo "All clean."
-  else
+  if [[ -n $branches_to_delete ]] then
     echo "\nBranches with missing remote tracking branches:"
-    # list branches
     for branch in $branches_to_delete; do
       echo "- $branch"
     done
@@ -256,19 +255,60 @@ fnGitPrune() {
     read -q "CONFIRM?Delete ALL these? (y/N) "
     echo ""
 
-    if [[ $CONFIRM == "y" ]]
-      then
-        # delete branches
-        for branch in $branches_to_delete; do
-          git branch -D ${branch// /}
-        done
+    if [[ $CONFIRM == "y" ]] then
+      for branch in $branches_to_delete; do
+        git branch -D ${branch// /}
+      done
+    else
+      echo "\nCancelled"
+    fi
+  fi
+  unset branches_to_delete
 
-      else
-        echo "\nCancelled"
+  # --- Part 2: local-only branches not checked out anywhere ---
+  # These are often orphaned worktree branches that were never pushed.
+  # Only targets branches that: are not current (*), not in a worktree (+),
+  # and have NO matching remote branch.
+
+  # get all remote branch names (without origin/ prefix)
+  local remote_branches
+  remote_branches=$(git branch -r 2>/dev/null | sed 's/^ *//' | grep -v 'HEAD' | sed 's|^origin/||')
+
+  # get local branches not checked out anywhere
+  local candidates
+  candidates=$(git branch -vv | grep -v '^\*' | grep -v '^\+' | awk '{print $1}')
+
+  local orphan_branches=()
+  while IFS= read -r branch; do
+    [[ -z "$branch" ]] && continue
+    # skip if this branch has a matching remote
+    if ! echo "$remote_branches" | grep -qxF "$branch"; then
+      orphan_branches+=("$branch")
+    fi
+  done <<< "$candidates"
+
+  if [[ ${#orphan_branches[@]} -gt 0 ]] then
+    echo "\nLocal branches with no remote (not checked out anywhere):"
+    for branch in "${orphan_branches[@]}"; do
+      echo "- $branch"
+    done
+
+    echo ""
+    read -q "CONFIRM?Delete ALL these? (y/N) "
+    echo ""
+
+    if [[ $CONFIRM == "y" ]] then
+      for branch in "${orphan_branches[@]}"; do
+        git branch -D ${branch// /}
+      done
+    else
+      echo "\nCancelled"
     fi
   fi
 
-  unset branches_to_delete
+  if [[ -z $branches_to_delete && ${#orphan_branches[@]} -eq 0 ]] then
+    echo "All clean."
+  fi
 }
 
 fnGitBranch() {
