@@ -192,34 +192,30 @@ fnGitRebaseInteractive() {
 
 # Does a hard reset with double confirmation if there are uncommitted changes.
 fnGitReset() {
-  uncommitted_changes=($(git status -s))
+  local has_changes=$(git status --porcelain)
 
-  if (( ${#uncommitted_changes[@]} == 0 )) then
+  if [[ -z "$has_changes" ]] then
     git reset --hard $(fnGitUpstream)
   else
     echo ""
-    echo "Uncommited chagnes:"
+    echo "Uncommitted changes:"
     git status -s
 
     echo ""
+    local CONFIRM
     read -q "CONFIRM?PERMANENTLY lose uncommitted changes above? (y/N) "
 
     if [[ $CONFIRM == "y" ]] then
       echo ""
+      local CONFIRM_AGAIN
       read -q "CONFIRM_AGAIN?You're aware there exists no black magic that can bring these back? (y/N) "
       echo ""
 
       if [[ $CONFIRM_AGAIN == "y" ]] then
         git reset --hard $(fnGitUpstream)
-        # also remove untracked files
-        git clean -df
       fi
     fi
   fi
-
-  unset uncommitted_changes
-  unset CONFIRM
-  unset CONFIRM_AGAIN
 }
 
 fnGitPrune() {
