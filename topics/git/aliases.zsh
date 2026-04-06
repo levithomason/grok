@@ -181,7 +181,7 @@ fnGitRebase() {
 
 fnGitRebaseInteractive() {
   if [[ $1 == "" ]]; then
-    echo "rebasing from ${fnGitTrunkName} by default"
+    echo "rebasing from $(fnGitTrunkName) by default"
     git fetch $(fnGitRemoteName)
     git rebase -i $(git merge-base $(fnGitCurrentBranch) $(fnGitRemoteName)/$(fnGitTrunkName))
   else
