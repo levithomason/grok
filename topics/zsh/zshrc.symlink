@@ -25,3 +25,20 @@ if [[ ":${PATH}:" != *":/Users/levithomason/.claude-cli/CurrentVersion:"* ]]; th
     export PATH="/Users/levithomason/.claude-cli/CurrentVersion:${PATH}"
 fi
 # END claude-cli MANAGED BLOCK
+# BEGIN teams-otel-claude-code
+export CLAUDE_CODE_ENABLE_TELEMETRY='1'
+export OTEL_SERVICE_NAME='claude-code-Levis-MacBook-Pro.local'
+export OTEL_RESOURCE_ATTRIBUTES='hostPlatform=darwin,cpuModel=Apple%20M1%20Pro,hostOS=Darwin%2025.4.0,hostMemoryGB=32,user.email=me%40levithomason.com'
+export OTEL_EXPORTER_OTLP_ENDPOINT='http://localhost:4318'
+export OTEL_EXPORTER_OTLP_PROTOCOL='http/protobuf'
+export OTEL_LOGS_EXPORTER='otlp'
+export OTEL_METRICS_EXPORTER='otlp'
+export OTEL_LOGS_EXPORT_INTERVAL='5000'
+export OTEL_LOG_TOOL_DETAILS='1'
+export OTEL_LOG_USER_PROMPTS='1'
+export OTEL_METRICS_INCLUDE_VERSION='true'
+export OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE='delta'
+export COPILOT_OTEL_ENABLED='1'
+export COPILOT_OTEL_ENDPOINT='http://localhost:4318'
+export COPILOT_OTEL_CAPTURE_CONTENT='1'
+# END teams-otel-claude-code

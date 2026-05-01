@@ -59,3 +59,5 @@
 	helper = !/opt/homebrew/bin/gh auth git-credential
 [credential "azrepos:org/outlookweb"]
 	username = lethoma@microsoft.com
+[credential "azrepos:org/1esgitops"]
+	azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
