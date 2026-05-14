@@ -49,8 +49,10 @@
     helper =
     helper = /usr/local/share/gcm-core/git-credential-manager
     azreposCredentialType = oauth
+	useHttpPath = true
 [credential "azrepos:org/domoreexp"]
 	username = lethoma@microsoft.com
+	azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
 [credential "https://github.com"]
 	helper = 
 	helper = !/opt/homebrew/bin/gh auth git-credential
