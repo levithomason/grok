@@ -13,5 +13,7 @@ ssh-add -D > /dev/null 2>&1
 
 # add all keys
 for key in $(ls ~/.ssh/ | grep identity | grep -v \.pub$); do
+  # 600 disallow access by others, required so their not ignored
+  chmod 600 ~/.ssh/$key
   ssh-add ~/.ssh/$key > /dev/null 2>&1
 done
