@@ -8,4 +8,5 @@
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
 # Disable local Time Machine backups
-hash tmutil &> /dev/null && sudo tmutil disablelocal
+# Tahoe 26.5 - `disablelocal` is not a recognized verb
+# hash tmutil &> /dev/null && sudo tmutil disablelocal

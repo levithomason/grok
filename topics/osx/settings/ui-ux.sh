@@ -91,7 +91,9 @@ defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
 # sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
 # Restart automatically if the computer freezes
-sudo systemsetup -setrestartfreeze on
+# Tahoe 26.5 didn't like this:
+#   2026-05-15 00:46:25.463 systemsetup[22983:295538] ### Error:-99 File:/AppleInternal/Library/BuildRoots/4~CNqkugBhcZYxCpFyKBY9cTeFR0o3wl3GtaQxQk0/Library/Caches/com.apple.xbs/TemporaryDirectory.duXmje/Sources/Admin/InternetServices.m Line:395
+# sudo systemsetup -setrestartfreeze on
 
 # Never go into computer sleep mode
 # sudo systemsetup -setcomputersleep Off > /dev/null
