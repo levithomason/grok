@@ -34,5 +34,5 @@ brew install --formula grc coreutils spark
 # Post install health
 #
 
-echo "... pruning brew"
-brew prune
+echo "... cleaning brew"
+brew cleanup
