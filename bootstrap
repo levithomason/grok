@@ -132,10 +132,8 @@ symlink_dotfiles
 info "setting default shell"
 source $GROK_LIB/set_default_shell.sh
 
-# Ensure we have brew before running installs
-source $GROK_TOPICS/homebrew/install_if_needed.sh
-
 # Run topic install.sh scripts.
+# (run_topic_installs ensures brew + runs homebrew topic first)
 info "installing dependencies"
 source $GROK_LIB/run_topic_installs.zsh
 source $GROK_LIB/run_topic_installs.zsh
