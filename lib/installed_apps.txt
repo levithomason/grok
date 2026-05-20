@@ -1,2 +1,3 @@
+docker
 iterm2
 rectangle
