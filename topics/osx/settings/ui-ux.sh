@@ -29,8 +29,11 @@
 # Possible values: `WhenScrolling`, `Automatic` and `Always`
 defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
 
-# Increase window resize speed for Cocoa applications
-# defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+# Speed up window resize animation for Cocoa apps (default ~0.2)
+defaults write NSGlobalDomain NSWindowResizeTime -float 0.05
+
+# Kill the "window flies in" animation when apps open new windows
+defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
 # Expand save panel by default
 # defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
