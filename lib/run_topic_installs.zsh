@@ -24,18 +24,25 @@ source $GROK_TOPICS/homebrew/install_if_needed.sh
 ###############################################################################
 # RUN TOPIC INSTALL SCRIPTS
 #
-# Homebrew runs first so app/cli installs happen before topics that depend on
-# them. Remaining topics run in filesystem order.
+# Ordered prerequisites run first so later topics can depend on them:
+#   homebrew  → installs `gh` and other CLIs/apps used downstream
+#   github    → `gh auth login` so private clones / pushes work
+# Remaining topics then run in filesystem order.
 #
 
 HOMEBREW_INSTALLER="$GROK_TOPICS/homebrew/install.sh"
+GITHUB_INSTALLER="$GROK_TOPICS/github/install.sh"
 
-if [ -f "$HOMEBREW_INSTALLER" ]; then
-  log_header homebrew
-  source "$HOMEBREW_INSTALLER"
-fi
+for installer in "$HOMEBREW_INSTALLER" "$GITHUB_INSTALLER"; do
+  if [ -f "$installer" ]; then
+    log_header $(basename ${installer:h})
+    source "$installer"
+  fi
+done
 
-for installer in $(find $GROK_TOPICS -name install.sh -not -path "$HOMEBREW_INSTALLER"); do
+for installer in $(find $GROK_TOPICS -name install.sh \
+  -not -path "$HOMEBREW_INSTALLER" \
+  -not -path "$GITHUB_INSTALLER"); do
   log_header $(basename ${installer/\/install.sh});
   source $installer;
 done
