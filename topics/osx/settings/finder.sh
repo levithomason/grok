@@ -55,11 +55,6 @@ defaults write NSGlobalDomain com.apple.springing.delay -float 0
 # Avoid creating .DS_Store files on network volumes
 # defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 
-# Disable disk image verification
-# defaults write com.apple.frameworks.diskimages skip-verify -bool true
-# defaults write com.apple.frameworks.diskimages skip-verify-locked -bool true
-# defaults write com.apple.frameworks.diskimages skip-verify-remote -bool true
-
 # Automatically open a new Finder window when a volume is mounted
 defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
 defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
@@ -95,21 +90,11 @@ defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 # Disable the warning before emptying the Trash
 # defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
-# Empty Trash securely by default
-defaults write com.apple.finder EmptyTrashSecurely -bool true
-
 # Enable AirDrop over Ethernet and on unsupported Macs running Lion
 # defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 
-# Enable the MacBook Air SuperDrive on any Mac
-# sudo nvram boot-args="mbasd=1"
-
 # Show the ~/Library folder
 chflags nohidden ~/Library
-
-# Remove Dropbox’s green checkmark icons in Finder
-# file=/Applications/Dropbox.app/Contents/Resources/emblem-dropbox-uptodate.icns
-# [ -e "${file}" ] && mv -f "${file}" "${file}.bak"
 
 # Expand the following File Info panes:
 # “General”, “Open with”, and “Sharing & Permissions”
