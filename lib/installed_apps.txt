@@ -1,6 +1,3 @@
-discord
 docker
 iterm2
 rectangle
-telegram
-whatsapp
