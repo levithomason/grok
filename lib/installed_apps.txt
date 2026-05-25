@@ -1,3 +1,4 @@
 docker
 iterm2
 rectangle
+telegram
