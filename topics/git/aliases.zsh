@@ -218,6 +218,76 @@ fnGitReset() {
   fi
 }
 
+# Remove worktrees abandoned by a dead process.
+#
+# `git worktree prune` only clears admin entries whose directory has vanished;
+# it leaves behind worktrees that still exist on disk but whose owning process
+# is gone. Claude Code agent worktrees (under .claude/worktrees/, each carrying
+# a full node_modules) are the usual offenders: they lock the worktree with the
+# agent's pid and never unlock if that agent is killed. We remove ONLY worktrees
+# locked by a pid that is no longer alive — a live agent keeps an alive pid, and
+# worktrees you create by hand are unlocked, so neither is ever touched.
+fnGitPruneWorktrees() {
+  # NOTE: do NOT name a local `path` — in zsh it is the array tied to $PATH,
+  # so shadowing it empties PATH inside this function and breaks every command.
+  local to_remove=()
+  local line wt gitdir_line admindir reason pid kerr branch dirty label CONFIRM
+  local first=1
+
+  while IFS= read -r line; do
+    [[ $line == worktree\ * ]] || continue
+    wt=${line#worktree }
+
+    # skip the main worktree (always the first record)
+    if (( first )); then first=0; continue; fi
+
+    # a linked worktree's .git is a file pointing at its admin dir
+    [[ -f "$wt/.git" ]] || continue
+    gitdir_line=$(< "$wt/.git")
+    admindir=${gitdir_line#gitdir: }
+
+    # consider only worktrees locked by a dead pid. anchor the `pid` token so a
+    # reason like "stupid 4242" can't be misread as pid 4242.
+    [[ -f "$admindir/locked" ]] || continue
+    reason=$(< "$admindir/locked")
+    [[ $reason =~ '(^|[^[:alnum:]])pid ([0-9]+)' ]] || continue
+    pid=$match[2]
+
+    # keep the worktree if its owner is still alive. `kill -0` success = alive;
+    # on failure distinguish "no such process" (dead -> candidate) from
+    # "operation not permitted" (alive, owned by another user -> keep). fail
+    # closed: only a confirmed-dead pid makes a worktree a removal candidate.
+    if kerr=$(kill -0 $pid 2>&1); then continue; fi
+    [[ $kerr == *permitted* ]] && continue
+
+    to_remove+=("$wt")
+  done < <(git worktree list --porcelain)
+
+  (( ${#to_remove[@]} > 0 )) || return 0
+
+  echo "\nWorktrees abandoned by a dead process:"
+  for wt in "${to_remove[@]}"; do
+    branch=$(git -C "$wt" symbolic-ref --short -q HEAD || echo "detached")
+    dirty=$(git -C "$wt" status --porcelain 2>/dev/null | grep -c .)
+    label="- $wt ($branch"
+    (( dirty > 0 )) && label+=", $dirty UNCOMMITTED"
+    echo "$label)"
+  done
+
+  echo ""
+  read -q "CONFIRM?Remove ALL these worktrees? (y/N) "
+  echo ""
+
+  if [[ $CONFIRM == "y" ]] then
+    for wt in "${to_remove[@]}"; do
+      git worktree unlock "$wt" 2>/dev/null
+      git worktree remove --force "$wt" && echo "removed $wt"
+    done
+  else
+    echo "\nCancelled"
+  fi
+}
+
 fnGitPrune() {
   # make sure we're in a git repo
   if [[ $(fnIsGitRepo) != "true" ]] then
@@ -227,6 +297,10 @@ fnGitPrune() {
   # prune stale worktree entries (directories no longer on disk)
   # this un-marks branches with + so they become eligible for deletion below
   git worktree prune
+
+  # remove worktrees abandoned by a dead process (stale lock pid), which
+  # `git worktree prune` leaves behind; frees their branches for deletion below
+  fnGitPruneWorktrees
 
   # prune remote tracking branches without switching away from current branch
   git fetch --prune
