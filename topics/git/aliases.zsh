@@ -316,13 +316,13 @@ fnGitPrune() {
   branches_to_delete=("${(f)branches_to_delete}")
 
   if [[ -n $branches_to_delete ]] then
-    echo "\nBranches with missing remote tracking branches:"
+    echo "\nRemote branch deleted (merge status unknown):"
     for branch in $branches_to_delete; do
       echo "- $branch"
     done
 
     echo ""
-    read -q "CONFIRM?Delete ALL these? (y/N) "
+    read -q "CONFIRM?Delete all? (y/N) "
     echo ""
 
     if [[ $CONFIRM == "y" ]] then
@@ -339,6 +339,18 @@ fnGitPrune() {
   # These are often orphaned worktree branches that were never pushed.
   # Only targets branches that: are not current (*), not in a worktree (+),
   # and have NO matching remote branch.
+  #
+  # SAFETY: a local-only branch may still hold real unpushed work, and the only
+  # delete we have is `git branch -D` (force). So split the candidates by whether
+  # they carry commits that exist on no remote:
+  #   - 0 unpushed -> every commit is on a remote; the normal batch prompt.
+  #   - >0 unpushed -> surfaced separately, with the commit count, behind a
+  #     scarier prompt — so `-D` can never silently nuke unpushed work batched in
+  #     with the husks. (Mirrors how the worktree prune surfaces UNCOMMITTED.)
+  # `--not --remotes` counts commits reachable from the branch but from no
+  # remote-tracking ref; with no remotes at all it counts everything, which fails
+  # safe (treated as risky). Git refnames can't contain ':' so it is a safe
+  # delimiter for the "branch:count" entries.
 
   # get all remote branch names (without origin/ prefix)
   local remote_branches
@@ -348,27 +360,33 @@ fnGitPrune() {
   local candidates
   candidates=$(git branch -vv | grep -v '^\*' | grep -v '^\+' | awk '{print $1}')
 
-  local orphan_branches=()
+  local safe_orphans=() risky_orphans=()
+  local unpushed b
   while IFS= read -r branch; do
     [[ -z "$branch" ]] && continue
     # skip if this branch has a matching remote
-    if ! echo "$remote_branches" | grep -qxF "$branch"; then
-      orphan_branches+=("$branch")
+    echo "$remote_branches" | grep -qxF "$branch" && continue
+    # commits on this branch that live on no remote-tracking ref
+    unpushed=$(git rev-list --count "$branch" --not --remotes 2>/dev/null)
+    if (( unpushed > 0 )); then
+      risky_orphans+=("$branch:$unpushed")
+    else
+      safe_orphans+=("$branch")
     fi
   done <<< "$candidates"
 
-  if [[ ${#orphan_branches[@]} -gt 0 ]] then
-    echo "\nLocal branches with no remote (not checked out anywhere):"
-    for branch in "${orphan_branches[@]}"; do
+  if (( ${#safe_orphans[@]} > 0 )) then
+    echo "\nLocal-only, every commit is on a remote (safe to delete):"
+    for branch in "${safe_orphans[@]}"; do
       echo "- $branch"
     done
 
     echo ""
-    read -q "CONFIRM?Delete ALL these? (y/N) "
+    read -q "CONFIRM?Delete all? (y/N) "
     echo ""
 
     if [[ $CONFIRM == "y" ]] then
-      for branch in "${orphan_branches[@]}"; do
+      for branch in "${safe_orphans[@]}"; do
         git branch -D ${branch// /}
       done
     else
@@ -376,7 +394,27 @@ fnGitPrune() {
     fi
   fi
 
-  if [[ -z $branches_to_delete && ${#orphan_branches[@]} -eq 0 ]] then
+  if (( ${#risky_orphans[@]} > 0 )) then
+    echo "\n⚠️  Local-only, commits on no remote (lost forever if deleted):"
+    for entry in "${risky_orphans[@]}"; do
+      echo "- ${entry%:*} (${entry##*:} unpushed)"
+    done
+
+    echo ""
+    read -q "CONFIRM?Delete UNPUSHED branches? (y/N) "
+    echo ""
+
+    if [[ $CONFIRM == "y" ]] then
+      for entry in "${risky_orphans[@]}"; do
+        b=${entry%:*}
+        git branch -D ${b// /}
+      done
+    else
+      echo "\nCancelled"
+    fi
+  fi
+
+  if [[ -z $branches_to_delete && ${#safe_orphans[@]} -eq 0 && ${#risky_orphans[@]} -eq 0 ]] then
     echo "All clean."
   fi
 }
