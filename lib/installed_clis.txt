@@ -1,5 +1,6 @@
 gh
 git
+glow
 node
 nvm
 tree
