@@ -305,88 +305,78 @@ fnGitPrune() {
   # prune remote tracking branches without switching away from current branch
   git fetch --prune
 
-  # --- Part 1: branches whose remote tracking branch was deleted ---
+  # --- classify every deletable branch by whether its work survives deletion ---
   #
-  # get verbose branch info
-  # remove the current branch (marked with *)
-  # remove branches checked out in linked worktrees (marked with +)
-  # filter by branches with a remote tracking branch that does not exist on remote
-  # print only their branch names
-  branches_to_delete=$(git branch -vv | grep -v "\*" | grep -v "+" | grep ": gone]" | awk '{print $1}')
-  branches_to_delete=("${(f)branches_to_delete}")
-
-  if [[ -n $branches_to_delete ]] then
-    echo "\nRemote branch deleted (merge status unknown):"
-    for branch in $branches_to_delete; do
-      echo "- $branch"
-    done
-
-    echo ""
-    read -q "CONFIRM?Delete all? (y/N) "
-    echo ""
-
-    if [[ $CONFIRM == "y" ]] then
-      for branch in $branches_to_delete; do
-        git branch -D ${branch// /}
-      done
-    else
-      echo "\nCancelled"
-    fi
-  fi
-  unset branches_to_delete
-
-  # --- Part 2: local-only branches not checked out anywhere ---
-  # These are often orphaned worktree branches that were never pushed.
-  # Only targets branches that: are not current (*), not in a worktree (+),
-  # and have NO matching remote branch.
+  # A branch is safe to delete only when its commits are preserved elsewhere. The
+  # ONLY unsafe case is commits that live on no remote AND were never merged — the
+  # trap now that AI creates branches that don't follow the "always pushed" rule.
+  # Each branch gets one verdict so the confirm is fearless:
   #
-  # SAFETY: a local-only branch may still hold real unpushed work, and the only
-  # delete we have is `git branch -D` (force). So split the candidates by whether
-  # they carry commits that exist on no remote:
-  #   - 0 unpushed -> every commit is on a remote; the normal batch prompt.
-  #   - >0 unpushed -> surfaced separately, with the commit count, behind a
-  #     scarier prompt — so `-D` can never silently nuke unpushed work batched in
-  #     with the husks. (Mirrors how the worktree prune surfaces UNCOMMITTED.)
-  # `--not --remotes` counts commits reachable from the branch but from no
-  # remote-tracking ref; with no remotes at all it counts everything, which fails
-  # safe (treated as risky). Git refnames can't contain ':' so it is a safe
-  # delimiter for the "branch:count" entries.
+  #   MERGED - its PR merged, or it is already in the trunk. Safe. (A squash merge
+  #            rewrites your commits into one trunk commit, so they sit on no remote
+  #            branch — only the PR-merged / in-trunk check can see this. Needs gh.)
+  #   PUSHED - every commit is reachable from some remote; the local ref is
+  #            disposable (the classic rule). Safe.
+  #   UNIQUE - commits on no remote, not merged. Real work, lost with the branch.
+  #
+  # Left untouched: the trunk, the current branch (*), worktree-held branches (+),
+  # any branch with a live remote and no merge (active work), and any branch whose
+  # name has an OPEN PR (names get reused across a merged and a later open PR).
 
-  # get all remote branch names (without origin/ prefix)
-  local remote_branches
+  local trunk remote_trunk merged_prs open_prs remote_branches
+  trunk=$(fnGitTrunkName)
+  remote_trunk="$(fnGitRemoteName)/$trunk"
   remote_branches=$(git branch -r 2>/dev/null | sed 's/^ *//' | grep -v 'HEAD' | sed 's|^origin/||')
 
-  # get local branches not checked out anywhere
-  local candidates
-  candidates=$(git branch -vv | grep -v '^\*' | grep -v '^\+' | awk '{print $1}')
+  # PR state, fetched once. Empty when gh is absent or this is not a GitHub repo;
+  # then MERGED falls back to the in-trunk (ancestry) check only, so a squash-merged
+  # branch lands in UNIQUE — surfaced, never silently deleted. Fails safe.
+  if command -v gh >/dev/null 2>&1; then
+    merged_prs=$(gh pr list --state merged --limit 4000 --json headRefName --jq '.[].headRefName' 2>/dev/null)
+    open_prs=$(gh pr list --state open --limit 4000 --json headRefName --jq '.[].headRefName' 2>/dev/null)
+  fi
 
-  local safe_orphans=() risky_orphans=()
-  local unpushed b
+  # local branches except the current one (*) and worktree-held ones (+)
+  local candidates
+  candidates=$(git branch -vv | grep -v '^[*+]' | awk '{print $1}')
+
+  local merged_list=() pushed_list=() unique_list=()
+  local branch unpushed
   while IFS= read -r branch; do
-    [[ -z "$branch" ]] && continue
-    # skip if this branch has a matching remote
+    [[ -z "$branch" || "$branch" == "$trunk" ]] && continue
+    # live PR on this name -> active work, never delete
+    echo "$open_prs" | grep -qxF "$branch" && continue
+    # merged: PR merged, or already contained in the trunk
+    if { [[ -n "$merged_prs" ]] && echo "$merged_prs" | grep -qxF "$branch"; } \
+       || git merge-base --is-ancestor "$branch" "$remote_trunk" 2>/dev/null; then
+      merged_list+=("$branch")
+      continue
+    fi
+    # not merged: leave branches that still have a live remote (active work)
     echo "$remote_branches" | grep -qxF "$branch" && continue
-    # commits on this branch that live on no remote-tracking ref
+    # remote gone/absent: safe only if every commit lives on some remote ref.
+    # `--not --remotes` fails safe (counts everything when there are no remotes).
     unpushed=$(git rev-list --count "$branch" --not --remotes 2>/dev/null)
     if (( unpushed > 0 )); then
-      risky_orphans+=("$branch:$unpushed")
+      unique_list+=("$branch:$unpushed")
     else
-      safe_orphans+=("$branch")
+      pushed_list+=("$branch")
     fi
   done <<< "$candidates"
 
-  if (( ${#safe_orphans[@]} > 0 )) then
-    echo "\nLocal-only, every commit is on a remote (safe to delete):"
-    for branch in "${safe_orphans[@]}"; do
-      echo "- $branch"
-    done
+  # SAFE: merged + pushed, one confirm — the fearless "yes"
+  local safe=("${merged_list[@]}" "${pushed_list[@]}")
+  if (( ${#safe[@]} > 0 )) then
+    echo "\nSafe to delete — work is preserved elsewhere:"
+    for branch in "${merged_list[@]}"; do echo "  MERGED  $branch"; done
+    for branch in "${pushed_list[@]}"; do echo "  PUSHED  $branch"; done
 
     echo ""
-    read -q "CONFIRM?Delete all? (y/N) "
+    read -q "CONFIRM?Delete all ${#safe[@]} safe branches? (y/N) "
     echo ""
 
     if [[ $CONFIRM == "y" ]] then
-      for branch in "${safe_orphans[@]}"; do
+      for branch in "${safe[@]}"; do
         git branch -D ${branch// /}
       done
     else
@@ -394,28 +384,29 @@ fnGitPrune() {
     fi
   fi
 
-  if (( ${#risky_orphans[@]} > 0 )) then
-    echo "\n⚠️  Local-only, commits on no remote (lost forever if deleted):"
-    for entry in "${risky_orphans[@]}"; do
-      echo "- ${entry%:*} (${entry##*:} unpushed)"
+  # UNSAFE: unique work, on no remote and never merged — itemized, scarier confirm
+  if (( ${#unique_list[@]} > 0 )) then
+    echo "\n⚠️  UNIQUE — commits on no remote, not merged (lost forever if deleted):"
+    for entry in "${unique_list[@]}"; do
+      echo "  ${entry%:*} (${entry##*:} unpushed)"
     done
 
     echo ""
-    read -q "CONFIRM?Delete UNPUSHED branches? (y/N) "
+    read -q "CONFIRM?Delete these UNMERGED, UNPUSHED branches? (y/N) "
     echo ""
 
     if [[ $CONFIRM == "y" ]] then
-      for entry in "${risky_orphans[@]}"; do
-        b=${entry%:*}
-        git branch -D ${b// /}
+      for entry in "${unique_list[@]}"; do
+        branch=${entry%:*}
+        git branch -D ${branch// /}
       done
     else
       echo "\nCancelled"
     fi
   fi
 
-  if [[ -z $branches_to_delete && ${#safe_orphans[@]} -eq 0 && ${#risky_orphans[@]} -eq 0 ]] then
-    echo "All clean."
+  if (( ${#safe[@]} == 0 && ${#unique_list[@]} == 0 )) then
+    echo "No deletable branches."
   fi
 }
 
