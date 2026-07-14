@@ -1,6 +1,7 @@
 gh
 git
 glow
+magic-wormhole
 node
 nvm
 tree
