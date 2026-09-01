@@ -310,14 +310,16 @@ fnGitPrune() {
   # A branch is safe to delete only when its commits are preserved elsewhere. The
   # ONLY unsafe case is commits that live on no remote AND were never merged — the
   # trap now that AI creates branches that don't follow the "always pushed" rule.
-  # Each branch gets one verdict so the confirm is fearless:
+  # Each branch gets one verdict, and the verdict decides the action outright —
+  # no prompts, because the answer never varied: safe ones go, unique ones stay.
   #
   #   MERGED - its PR merged, or it is already in the trunk. Safe. (A squash merge
   #            rewrites your commits into one trunk commit, so they sit on no remote
   #            branch — only the PR-merged / in-trunk check can see this. Needs gh.)
   #   PUSHED - every commit is reachable from some remote; the local ref is
   #            disposable (the classic rule). Safe.
-  #   UNIQUE - commits on no remote, not merged. Real work, lost with the branch.
+  #   UNIQUE - commits on no remote, not merged. Real work, lost with the branch,
+  #            so it is only reported — never deleted here.
   #
   # Left untouched: the trunk, the current branch (*), worktree-held branches (+),
   # any branch with a live remote and no merge (active work), and any branch whose
@@ -364,49 +366,31 @@ fnGitPrune() {
     fi
   done <<< "$candidates"
 
-  # SAFE: merged + pushed, one confirm — the fearless "yes"
+  # SAFE: merged + pushed — deleted outright, no prompt. The verdict already
+  # proves every commit survives elsewhere, so the answer was always "yes".
   local safe=("${merged_list[@]}" "${pushed_list[@]}")
   if (( ${#safe[@]} > 0 )) then
-    echo "\nSafe to delete — work is preserved elsewhere:"
+    echo "\nDeleted — work is preserved elsewhere:"
     for branch in "${merged_list[@]}"; do echo "  MERGED  $branch"; done
     for branch in "${pushed_list[@]}"; do echo "  PUSHED  $branch"; done
 
-    echo ""
-    read -q "CONFIRM?Delete all ${#safe[@]} safe branches? (y/N) "
-    echo ""
-
-    if [[ $CONFIRM == "y" ]] then
-      for branch in "${safe[@]}"; do
-        git branch -D ${branch// /}
-      done
-    else
-      echo "\nCancelled"
-    fi
+    for branch in "${safe[@]}"; do
+      git branch -D ${branch// /} >/dev/null
+    done
   fi
 
-  # UNSAFE: unique work, on no remote and never merged — itemized, scarier confirm
+  # UNSAFE: unique work, on no remote and never merged — reported, never deleted.
+  # The answer was always "no", so don't ask: just surface it and let you decide
+  # out of band (push it, or `git branch -D` it by hand).
   if (( ${#unique_list[@]} > 0 )) then
-    echo "\n⚠️  UNIQUE — commits on no remote, not merged (lost forever if deleted):"
+    echo "\n⚠️  UNIQUE — commits on no remote, not merged (kept; delete by hand if you mean it):"
     for entry in "${unique_list[@]}"; do
       echo "  ${entry%:*} (${entry##*:} unpushed)"
     done
-
-    echo ""
-    read -q "CONFIRM?Delete these UNMERGED, UNPUSHED branches? (y/N) "
-    echo ""
-
-    if [[ $CONFIRM == "y" ]] then
-      for entry in "${unique_list[@]}"; do
-        branch=${entry%:*}
-        git branch -D ${branch// /}
-      done
-    else
-      echo "\nCancelled"
-    fi
   fi
 
   if (( ${#safe[@]} == 0 && ${#unique_list[@]} == 0 )) then
-    echo "No deletable branches."
+    echo "No branches to prune."
   fi
 }
 
