@@ -154,13 +154,15 @@ fnGitAdd() {
 }
 
 fnGitPushForce() {
-  echo ""
-  read -q "CONFIRM?FORCE push $(fnGitCurrentBranch)? (y/N) "
-  echo ""
-
-  if [[ $CONFIRM == "y" ]] then
-    git push --force
+  # the lease refuses if the remote moved since our last fetch, so only trunk needs a confirm
+  if [[ $(fnGitCurrentBranch) == $(fnGitTrunkName) ]]; then
+    echo ""
+    read -q "CONFIRM?FORCE push $(fnGitTrunkName)? (y/N) "
+    echo ""
+    [[ $CONFIRM == "y" ]] || return 1
   fi
+
+  git push --force-with-lease --force-if-includes
 }
 
 fnGitRebase() {
