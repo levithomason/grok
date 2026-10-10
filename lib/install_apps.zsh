@@ -6,6 +6,6 @@
 
 echo "... installing desktop apps"
 
-for app in $(cat $GROK_INSTALLED_APPS); do
- brew install --cask $app
-done
+# Install what's missing; leave what's already here alone. Upgrades are a
+# deliberate `brew upgrade`, not a side effect of re-running bootstrap.
+HOMEBREW_NO_INSTALL_UPGRADE=1 brew install --cask $(cat $GROK_INSTALLED_APPS)

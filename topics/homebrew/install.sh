@@ -20,7 +20,7 @@ brew update
 # Grok requirements
 #
 
-brew install --formula grc coreutils spark
+HOMEBREW_NO_INSTALL_UPGRADE=1 brew install --formula grc coreutils spark
 
 
 ###############################################################################
