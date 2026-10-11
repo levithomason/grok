@@ -4,5 +4,6 @@ glow
 magic-wormhole
 node
 nvm
+openjdk@21
 tree
 yarn
