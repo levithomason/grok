@@ -89,7 +89,7 @@ defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 defaults write com.apple.finder FXPreferredSearchViewStyle -string "Nlsv"
 
 # Per-folder view settings in .DS_Store override the default above; clear them
-find "$HOME" -path "$HOME/Library" -prune -o -name .DS_Store -type f -delete 2>/dev/null
+find "$HOME" \( -path "$HOME/Library" -o -path "$HOME/.Trash" \) -prune -o -name .DS_Store -type f -exec rm -f {} + 2>/dev/null
 
 # Disable the warning before emptying the Trash
 # defaults write com.apple.finder WarnOnEmptyTrash -bool false
