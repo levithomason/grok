@@ -86,6 +86,10 @@ defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 # Use list view in all Finder windows by default
 # Four-letter codes for view modes: `Nlsv`, `icnv`, `clmv`, `Flwv`
 defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+defaults write com.apple.finder FXPreferredSearchViewStyle -string "Nlsv"
+
+# Per-folder view settings in .DS_Store override the default above; clear them
+find "$HOME" -path "$HOME/Library" -prune -o -name .DS_Store -type f -delete 2>/dev/null
 
 # Disable the warning before emptying the Trash
 # defaults write com.apple.finder WarnOnEmptyTrash -bool false
