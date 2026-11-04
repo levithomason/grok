@@ -38,6 +38,8 @@
     insteadOf = https://bitbucket.org/
 [url "ssh://git@github.com/"]
     insteadOf = https://github.com/
+[url "https://github.com/agency-microsoft/"]
+    insteadOf = https://github.com/agency-microsoft/
 [pull]
     rebase = false
     merge = only
@@ -46,10 +48,9 @@
 [init]
     defaultBranch = master
 [credential]
-    helper =
-    helper = /usr/local/share/gcm-core/git-credential-manager
     azreposCredentialType = oauth
 	useHttpPath = true
+	helper = /Users/levithomason/local/gcm/git-credential-manager
 [credential "azrepos:org/domoreexp"]
 	username = lethoma@microsoft.com
 	azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -63,3 +64,5 @@
 	username = lethoma@microsoft.com
 [credential "azrepos:org/1esgitops"]
 	azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
+[credential "azrepos:org/office"]
+	username = levithomason@microsoft.com
