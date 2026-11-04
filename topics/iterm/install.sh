@@ -5,6 +5,8 @@
 # Adds word/line navigation to every iTerm profile:
 #   opt + left/right   jump word          (esc b / esc f)
 #   cmd + left/right   jump to line ends  (ctrl-a / ctrl-e)
+#   opt + backspace    delete word        (esc del)
+#   cmd + backspace    delete to line start (ctrl-u)
 #
 # Out of the box iTerm eats cmd+arrow for tab switching and sends opt+arrow as
 # a sequence zsh doesn't bind. Profile key mappings win over both.
@@ -18,12 +20,15 @@ PLIST="$TMP/iterm.plist"
 BUDDY=/usr/libexec/PlistBuddy
 
 # key (0xf702 left, 0xf703 right; 0x280000 opt, 0x300000 cmd) | action | text
+# backspace is 0x7f with bare modifiers (0x80000 opt, 0x100000 cmd)
 # action 10 = send escape sequence, 11 = send hex code
 MAPPINGS=(
   "0xf702-0x280000|10|b"
   "0xf703-0x280000|10|f"
   "0xf702-0x300000|11|0x01"
   "0xf703-0x300000|11|0x05"
+  "0x7f-0x80000|11|0x1b 0x7f"
+  "0x7f-0x100000|11|0x15"
 )
 
 if [ ! -d "/Applications/iTerm.app" ]; then
@@ -32,7 +37,7 @@ elif ! defaults export "$BUNDLE" "$PLIST" 2>/dev/null \
   || ! $BUDDY -c "Print :'New Bookmarks':0:Guid" "$PLIST" >/dev/null 2>&1; then
   echo "... iTerm has no profiles yet, launch it once then re-run grok"
 else
-  echo "... mapping opt/cmd + arrows to word/line navigation"
+  echo "... mapping opt/cmd + arrows/backspace to word/line navigation"
 
   i=0
   while $BUDDY -c "Print :'New Bookmarks':$i:Guid" "$PLIST" >/dev/null 2>&1; do
