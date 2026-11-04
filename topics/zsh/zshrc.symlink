@@ -11,3 +11,9 @@
 
 . $HOME/.grokfiles/lib/set_env_variables.sh
 . $HOME/.grokfiles/lib/run_topic_zsh_files.zsh
+
+# BEGIN Agency MANAGED BLOCK
+if [[ ":${PATH}:" != *":/Users/levithomason/.config/agency/CurrentVersion:"* ]]; then
+    export PATH="/Users/levithomason/.config/agency/CurrentVersion:${PATH}"
+fi
+# END Agency MANAGED BLOCK
