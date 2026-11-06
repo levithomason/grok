@@ -17,3 +17,5 @@ if [[ ":${PATH}:" != *":/Users/levithomason/.config/agency/CurrentVersion:"* ]];
     export PATH="/Users/levithomason/.config/agency/CurrentVersion:${PATH}"
 fi
 # END Agency MANAGED BLOCK
+
+export PATH="${PATH}:/Users/levithomason/.azureauth/0.9.5"
