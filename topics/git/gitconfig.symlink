@@ -66,3 +66,6 @@
 	azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
 [credential "azrepos:org/office"]
 	username = levithomason@microsoft.com
+[credential "https://domoreexp.visualstudio.com"]
+	helper = 
+	helper = "!f() { if test \"$1\" = get; then token=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken --output tsv) || return; printf \"username=AzureCLI\\npassword=%s\\n\" \"$token\"; fi; }; f"
