@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# gh: use the GitHub account set for this repo.
+#
+#   git config gh.account <login>                               # once per repo
+#   git config --file ~/.config/git/config gh.account <login>   # outside repos
+#
+# With one logged-in account, nothing to set up. With several, an unset repo
+# (or no outside-repo default) is an error, so agents and scripts never guess. The token is passed to this
+# one gh process only (GH_TOKEN); the active account is never switched.
+
+# The real gh: next one on PATH that isn't this script.
+IFS=:
+for d in $PATH; do
+  [ -x "$d/gh" ] && ! [ "$d/gh" -ef "$0" ] && real="$d/gh" && break
+done
+unset IFS
+[ -n "$real" ] || { echo "gh: real gh not found on PATH" >&2; exit 127; }
+
+# Explicit token, or commands that don't need an account: plain gh.
+[ -n "$GH_TOKEN$GITHUB_TOKEN" ] && exec "$real" "$@"
+case "$1" in
+  ""|auth|config|help|version|completion|__complete*|--version|--help) exec "$real" "$@" ;;
+esac
+
+# In a repo: only the repo's own setting (new clones must choose).
+# Outside a repo: the machine-local default in ~/.config/git/config.
+if git rev-parse --git-dir >/dev/null 2>&1; then
+  in_repo=1
+  account=$(git config --local gh.account)
+else
+  account=$(git config gh.account)  # system + ~/.gitconfig + ~/.config/git/config
+fi
+
+if [ -z "$account" ]; then
+  hosts="${GH_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/gh}/hosts.yml"
+  logins=$(sed -n 's/^        \([^ #][^:]*\):.*/\1/p' "$hosts" 2>/dev/null)
+  [ "$(echo "$logins" | grep -c .)" -le 1 ] && exec "$real" "$@"
+  if [ -n "$in_repo" ]; then
+    echo "gh: several GitHub accounts are logged in and none is set for this repo." >&2
+    echo "  Set one for this repo:            git config gh.account <login>" >&2
+  else
+    echo "gh: not in a git repo, several GitHub accounts are logged in, and no global default is set." >&2
+    echo "  Set a global default:             git config --file ~/.config/git/config gh.account <login>" >&2
+  fi
+  echo "  Or for one command:               GH_TOKEN=\$(gh auth token -u <login>) gh $*" >&2
+  echo "  Logged-in accounts:               $(echo $logins)" >&2
+  exit 1
+fi
+
+token=$("$real" auth token -u "$account" 2>/dev/null) || {
+  echo "gh: account '$account' (from git config gh.account) is not logged in." >&2
+  echo "  Log it in:  gh auth login" >&2
+  if [ -n "$in_repo" ]; then
+    echo "  Or change:  git config gh.account <login>" >&2
+  else
+    echo "  Or change:  git config --file ~/.config/git/config gh.account <login>" >&2
+  fi
+  exit 1
+}
+GH_TOKEN=$token exec "$real" "$@"
