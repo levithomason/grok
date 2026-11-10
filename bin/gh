@@ -1,61 +1,149 @@
 #!/bin/sh
 #
-# gh: use the GitHub account set for this repo.
+# gh: run gh as the right GitHub account for the repo, and serve git's https
+# credentials the same way (gitconfig's credential helper is this script).
+# The active account is never switched, so other terminals are unaffected.
 #
-#   git config gh.account <login>                               # once per repo
-#   git config --file ~/.config/git/config gh.account <login>   # outside repos
-#
-# With one logged-in account, nothing to set up. With several, an unset repo
-# (or no outside-repo default) is an error, so agents and scripts never guess. The token is passed to this
-# one gh process only (GH_TOKEN); the active account is never switched.
+# Which account, in order:
+#   1. GH_TOKEN / GITHUB_TOKEN already set: used as-is.
+#   2. The repo's `git config gh.account`.
+#   3. Not set: ask GitHub which logged-in account can push to the repo (or
+#      read it, if none can push) and save the answer as gh.account.
+#   4. Outside a repo with no repo named: gh.account from
+#      ~/.config/git/config, or the only logged-in account.
+# If that can't decide, it exits with instructions instead of guessing.
 
-# The real gh: next one on PATH that isn't this script.
+# The real gh: first one on PATH that isn't a script like this one (GUI apps
+# may have a bare PATH, so also try the usual install locations).
 IFS=:
-for d in $PATH; do
-  [ -x "$d/gh" ] && ! [ "$d/gh" -ef "$0" ] && real="$d/gh" && break
+for d in $PATH:/opt/homebrew/bin:/usr/local/bin; do
+  [ -x "$d/gh" ] && [ "$(head -c 2 "$d/gh")" != "#!" ] && real="$d/gh" && break
 done
 unset IFS
 [ -n "$real" ] || { echo "gh: real gh not found on PATH" >&2; exit 127; }
 
-# Explicit token, or commands that don't need an account: plain gh.
 [ -n "$GH_TOKEN$GITHUB_TOKEN" ] && exec "$real" "$@"
-case "$1" in
-  ""|auth|config|help|version|completion|__complete*|--version|--help) exec "$real" "$@" ;;
+
+# `gh auth login|setup-git|refresh` point git's credential helper at the real
+# gh, which would skip this script. Put it back afterwards.
+case "$1 $2" in
+  "auth login"|"auth setup-git"|"auth refresh")
+    "$real" "$@"; status=$?
+    dir=$(cd "$(dirname "$0")" && pwd)
+    case "$dir" in "$HOME"/*) dir="\$HOME${dir#"$HOME"}" ;; esac
+    self="!$dir/gh auth git-credential"
+    for h in https://github.com https://gist.github.com; do
+      if [ "$(git config --global --get-all "credential.$h.helper" | tail -1)" != "$self" ]; then
+        git config --global --unset-all "credential.$h.helper"
+        git config --global --add "credential.$h.helper" ""
+        git config --global --add "credential.$h.helper" "$self"
+      fi
+    done
+    exit $status ;;
 esac
 
-# In a repo: only the repo's own setting (new clones must choose).
-# Outside a repo: the machine-local default in ~/.config/git/config.
-if git rev-parse --git-dir >/dev/null 2>&1; then
-  in_repo=1
+# git calls `gh auth git-credential get` with the request on stdin, including
+# path=owner/repo.git (credential.useHttpPath). store/erase: nothing to do.
+credential=
+slug=
+case "$1 $2" in
+  "auth git-credential")
+    [ "$3" = get ] || exit 0
+    credential=$(cat)
+    slug=$(printf '%s\n' "$credential" | sed -n 's|^path=||p')
+    ;;
+  auth\ *|config\ *|help\ *|version\ *|completion\ *|__complete*|--version*|--help*|" ")
+    exec "$real" "$@" ;;
+  *)
+    # A repo named on the command line: -R/--repo, or gh repo <cmd> <repo>.
+    prev=
+    for a in "$@"; do
+      case "$prev" in -R|--repo) slug=$a ;; esac
+      case "$a" in --repo=*) slug=${a#--repo=} ;; esac
+      prev=$a
+    done
+    [ "$1" = repo ] && case "$3" in ""|-*) ;; *) slug=$3 ;; esac
+    ;;
+esac
+
+in_repo=
+git rev-parse --git-dir >/dev/null 2>&1 && in_repo=1
+
+account=
+if [ -n "$in_repo" ]; then
   account=$(git config --local gh.account)
-else
-  account=$(git config gh.account)  # system + ~/.gitconfig + ~/.config/git/config
+  # Commands about the current repo: that's origin.
+  [ -z "$slug" ] && slug=$(git ls-remote --get-url origin 2>/dev/null)
 fi
 
-if [ -z "$account" ]; then
-  hosts="${GH_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/gh}/hosts.yml"
-  logins=$(sed -n 's/^        \([^ #][^:]*\):.*/\1/p' "$hosts" 2>/dev/null)
-  [ "$(echo "$logins" | grep -c .)" -le 1 ] && exec "$real" "$@"
-  if [ -n "$in_repo" ]; then
-    echo "gh: several GitHub accounts are logged in and none is set for this repo." >&2
-    echo "  Set one for this repo:            git config gh.account <login>" >&2
-  else
-    echo "gh: not in a git repo, several GitHub accounts are logged in, and no global default is set." >&2
-    echo "  Set a global default:             git config --file ~/.config/git/config gh.account <login>" >&2
+# owner/repo from a URL or slug ("" if it isn't a github.com repo).
+slug=$(printf '%s\n' "$slug" | sed -E \
+  -e 's#^(https://|ssh://)?([^@/]*@)?github\.com[:/]##' \
+  -e 's#\.git$##' -e 's#/$##' | grep -E '^[^/:]+/[^/:]+$')
+
+hosts="${GH_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/gh}/hosts.yml"
+logins=$(sed -n 's/^        \([^ #][^:]*\):.*/\1/p' "$hosts" 2>/dev/null)
+default=$(git config --file "${XDG_CONFIG_HOME:-$HOME/.config}/git/config" gh.account ||
+  git config --global gh.account)
+[ "$(echo "$logins" | grep -c .)" -le 1 ] && [ -z "$account" ] && account=$logins
+
+# Ask GitHub which account can push (else read) the repo; save it once.
+saved=
+if [ -z "$account" ] && [ -n "$slug" ]; then
+  push= pull=
+  for u in $logins; do
+    perm=$(GH_TOKEN=$("$real" auth token -u "$u" 2>/dev/null) \
+      "$real" api "repos/$slug" --jq '.permissions.push' 2>/dev/null) || continue
+    pull="$pull $u"
+    [ "$perm" = true ] && push="$push $u"
+  done
+  pick() {  # the only one, or the default if it's among several
+    set -- $1
+    [ $# -eq 1 ] && echo "$1" && return
+    for u; do [ "$u" = "$default" ] && echo "$u" && return; done
+  }
+  if [ -n "$push" ]; then account=$(pick "$push"); else account=$(pick "$pull"); fi
+  if [ -n "$account" ] && [ -n "$in_repo" ]; then
+    git config --local gh.account "$account" && saved=1 &&
+      echo "gh: using GitHub account '$account' for $slug (saved: git config gh.account)" >&2
   fi
-  echo "  Or for one command:               GH_TOKEN=\$(gh auth token -u <login>) gh $*" >&2
-  echo "  Logged-in accounts:               $(echo $logins)" >&2
+fi
+
+[ -z "$account" ] && [ -z "$in_repo" ] && account=$default
+
+if [ -z "$account" ]; then
+  if [ -n "$slug" ] && [ -z "$push$pull" ]; then
+    echo "gh: none of the logged-in GitHub accounts can see $slug." >&2
+  elif [ -n "$slug" ]; then
+    echo "gh: several GitHub accounts can push to $slug; pick one." >&2
+  else
+    echo "gh: several GitHub accounts are logged in and none is set here." >&2
+  fi
+  echo "  Pick one for this repo:   git config gh.account <login>" >&2
+  echo "  Default outside repos:    git config --file ~/.config/git/config gh.account <login>" >&2
+  echo "  Add an account:           gh auth login -s workflow" >&2
+  echo "  Logged-in accounts:       $(echo $logins)" >&2
   exit 1
 fi
 
 token=$("$real" auth token -u "$account" 2>/dev/null) || {
-  echo "gh: account '$account' (from git config gh.account) is not logged in." >&2
-  echo "  Log it in:  gh auth login" >&2
-  if [ -n "$in_repo" ]; then
-    echo "  Or change:  git config gh.account <login>" >&2
-  else
-    echo "  Or change:  git config --file ~/.config/git/config gh.account <login>" >&2
-  fi
+  echo "gh: account '$account' (git config gh.account) is not logged in." >&2
+  echo "  Log it in:  gh auth login -s workflow    Or change:  git config gh.account <login>" >&2
   exit 1
 }
+
+# First use in a repo: pushing .github/workflows over https needs this scope.
+if [ -n "$saved" ]; then
+  scopes=$(GH_TOKEN=$token "$real" api -i user 2>/dev/null | tr -d '\r' |
+    sed -n 's/^[Xx]-[Oo][Aa]uth-[Ss]copes: //p')
+  case ", $scopes," in
+    ", ,"|*", workflow,"*) ;;
+    *) echo "gh: '$account' can't push workflow files yet. To allow it:" >&2
+       echo "  gh auth switch -u $account && gh auth refresh -s workflow && gh auth switch -u ${default:-<your default>}" >&2 ;;
+  esac
+fi
+
+if [ -n "$credential" ]; then
+  printf '%s\n' "$credential" | GH_TOKEN=$token exec "$real" "$@"
+fi
 GH_TOKEN=$token exec "$real" "$@"
