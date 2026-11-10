@@ -36,10 +36,11 @@
     renameLimit = 9999
 [url "ssh://git@bitbucket.org/"]
     insteadOf = https://bitbucket.org/
-[url "ssh://git@github.com/"]
-    insteadOf = https://github.com/
-[url "https://github.com/agency-microsoft/"]
-    insteadOf = https://github.com/agency-microsoft/
+# GitHub always over https, so bin/gh can pick the account per repo (see
+# topics/github/README.md). Rewrites ssh clone URLs too.
+[url "https://github.com/"]
+    insteadOf = git@github.com:
+    insteadOf = ssh://git@github.com/
 [pull]
     rebase = false
     merge = only
@@ -56,10 +57,10 @@
 	azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
 [credential "https://github.com"]
 	helper = 
-	helper = !/opt/homebrew/bin/gh auth git-credential
+	helper = !$HOME/.grokfiles/bin/gh auth git-credential
 [credential "https://gist.github.com"]
 	helper = 
-	helper = !/opt/homebrew/bin/gh auth git-credential
+	helper = !$HOME/.grokfiles/bin/gh auth git-credential
 [credential "azrepos:org/outlookweb"]
 	username = lethoma@microsoft.com
 [credential "azrepos:org/1esgitops"]
