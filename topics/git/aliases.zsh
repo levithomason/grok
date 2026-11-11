@@ -332,17 +332,37 @@ fnGitPrune() {
   remote_trunk="$(fnGitRemoteName)/$trunk"
   remote_branches=$(git branch -r 2>/dev/null | sed 's/^ *//' | grep -v 'HEAD' | sed 's|^origin/||')
 
-  # PR state, fetched once. Empty when gh is absent or this is not a GitHub repo;
-  # then MERGED falls back to the in-trunk (ancestry) check only, so a squash-merged
-  # branch lands in UNIQUE — surfaced, never silently deleted. Fails safe.
-  if command -v gh >/dev/null 2>&1; then
-    merged_prs=$(gh pr list --state merged --limit 4000 --json headRefName --jq '.[].headRefName' 2>/dev/null)
-    open_prs=$(gh pr list --state open --limit 4000 --json headRefName --jq '.[].headRefName' 2>/dev/null)
-  fi
-
   # local branches except the current one (*) and worktree-held ones (+)
   local candidates
   candidates=$(git branch -vv | grep -v '^[*+]' | awk '{print $1}')
+
+  # PR state for just these branches, in ONE GraphQL request (aliased open and
+  # merged pullRequests(headRefName:) counts per branch). Listing every merged PR
+  # in the repo instead pages 100 at a time and took ~20s on busy repos.
+  # Empty when gh is absent, the call fails, or this is not a GitHub repo; then
+  # MERGED falls back to the in-trunk (ancestry) check only, so a squash-merged
+  # branch lands in UNIQUE — surfaced, never silently deleted. Fails safe.
+  local candidate_arr=("${(@f)candidates}")
+  candidate_arr=(${candidate_arr:#$trunk})
+  candidate_arr=(${candidate_arr:#})
+  if command -v gh >/dev/null 2>&1 && (( ${#candidate_arr[@]} > 0 )); then
+    local i gql_vars="" gql_fields="" gql_args=() pr_states
+    for i in {1..${#candidate_arr[@]}}; do
+      gql_vars+=", \$b$i: String!"
+      gql_fields+=" o$i: pullRequests(headRefName: \$b$i, states: [OPEN]) { totalCount }"
+      gql_fields+=" m$i: pullRequests(headRefName: \$b$i, states: [MERGED]) { totalCount }"
+      gql_args+=(-f "b$i=${candidate_arr[$i]}")
+    done
+    # one line per (branch, state) that has PRs: "<o|m> <index>"
+    pr_states=$(gh api graphql -F owner='{owner}' -F repo='{repo}' "${gql_args[@]}" \
+      -f query="query(\$owner: String!, \$repo: String!$gql_vars) { repository(owner: \$owner, name: \$repo) {$gql_fields } }" \
+      --jq '.data.repository | to_entries[] | select(.value.totalCount > 0) | "\(.key[:1]) \(.key[1:])"' 2>/dev/null)
+    local kind idx
+    while read -r kind idx; do
+      [[ $kind == o ]] && open_prs+="${candidate_arr[$idx]}"$'\n'
+      [[ $kind == m ]] && merged_prs+="${candidate_arr[$idx]}"$'\n'
+    done <<< "$pr_states"
+  fi
 
   local merged_list=() pushed_list=() unique_list=()
   local branch unpushed
