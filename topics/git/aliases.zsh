@@ -305,7 +305,13 @@ fnGitPrune() {
   fnGitPruneWorktrees
 
   # prune remote tracking branches without switching away from current branch
-  git fetch --prune
+  # Every check below trusts ONLY this remote, the one just refreshed. Another
+  # remote's tracking refs can be stale (a branch deleted on the server since its
+  # last fetch); trusting them would call unique commits "pushed" and delete the
+  # branch. Commits that live only on another remote land in UNIQUE (kept).
+  local remote
+  remote=$(fnGitRemoteName)
+  git fetch --prune "$remote"
 
   # --- classify every deletable branch by whether its work survives deletion ---
   #
@@ -332,8 +338,9 @@ fnGitPrune() {
 
   local trunk remote_trunk merged_prs open_prs remote_branches
   trunk=$(fnGitTrunkName)
-  remote_trunk="$(fnGitRemoteName)/$trunk"
-  remote_branches=$(git branch -r 2>/dev/null | sed 's/^ *//' | grep -v 'HEAD' | sed 's|^origin/||')
+  remote_trunk="$remote/$trunk"
+  # branch names on $remote, prefix stripped (refs/remotes/<remote>/feature/x -> feature/x)
+  remote_branches=$(git for-each-ref --format='%(refname:lstrip=3)' "refs/remotes/$remote" | grep -vx 'HEAD')
 
   # local branches except the current one (*) and worktree-held ones (+)
   local candidates
@@ -398,8 +405,9 @@ fnGitPrune() {
     # not merged: leave branches that still have a live remote (active work)
     (( ${${(f)remote_branches}[(Ie)$branch]} )) && continue
     # remote gone/absent: safe only if every commit lives on some remote ref.
-    # `--not --remotes` fails safe (counts everything when there are no remotes).
-    unpushed=$(git rev-list --count "$branch" --not --remotes 2>/dev/null)
+    # Only $remote's refs count as "pushed" (see above). Fails safe: with no refs
+    # under $remote, every commit counts as unpushed.
+    unpushed=$(git rev-list --count "$branch" --not --remotes="$remote" 2>/dev/null)
     if (( unpushed > 0 )); then
       unique_list+=("$branch:$unpushed")
     else
