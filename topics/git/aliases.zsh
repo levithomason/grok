@@ -315,9 +315,12 @@ fnGitPrune() {
   # Each branch gets one verdict, and the verdict decides the action outright —
   # no prompts, because the answer never varied: safe ones go, unique ones stay.
   #
-  #   MERGED - its PR merged, or it is already in the trunk. Safe. (A squash merge
-  #            rewrites your commits into one trunk commit, so they sit on no remote
-  #            branch — only the PR-merged / in-trunk check can see this. Needs gh.)
+  #   MERGED - a merged PR's head commit IS the branch tip, or the branch is already
+  #            in the trunk. Safe. (A squash merge rewrites your commits into one
+  #            trunk commit, so they sit on no remote branch — only the PR check can
+  #            see this. Needs gh.) A PR merely sharing the branch NAME is not
+  #            enough: forks reuse names, and commits added after the merge would
+  #            be lost — those branches fall through to PUSHED/UNIQUE below.
   #   PUSHED - every commit is reachable from some remote; the local ref is
   #            disposable (the classic rule). Safe.
   #   UNIQUE - commits on no remote, not merged. Real work, lost with the branch,
@@ -336,32 +339,47 @@ fnGitPrune() {
   local candidates
   candidates=$(git branch -vv | grep -v '^[*+]' | awk '{print $1}')
 
-  # PR state for just these branches, in ONE GraphQL request (aliased open and
-  # merged pullRequests(headRefName:) counts per branch). Listing every merged PR
-  # in the repo instead pages 100 at a time and took ~20s on busy repos.
-  # Empty when gh is absent, the call fails, or this is not a GitHub repo; then
-  # MERGED falls back to the in-trunk (ancestry) check only, so a squash-merged
-  # branch lands in UNIQUE — surfaced, never silently deleted. Fails safe.
+  # PR state for just these branches, looked up by each branch's TIP COMMIT: the
+  # PRs whose head was exactly that commit (associatedPullRequests). Cost scales
+  # with local branches, never with the repo's PR count — one request per 100
+  # branches, ~1s. A name lookup can't be trusted for MERGED: `patch-1` alone has
+  # 84 merged PRs on cli/cli, mostly from forks.
+  # Open PRs are still matched by name: a false match only keeps a branch.
+  # gh absent, a failed call, a non-GitHub repo, or a tip commit GitHub has never
+  # seen all leave a branch un-MERGED, so it falls to the checks below. Fails safe.
   local candidate_arr=("${(@f)candidates}")
   candidate_arr=(${candidate_arr:#$trunk})
   candidate_arr=(${candidate_arr:#})
   if command -v gh >/dev/null 2>&1 && (( ${#candidate_arr[@]} > 0 )); then
-    local i gql_vars="" gql_fields="" gql_args=() pr_states
-    for i in {1..${#candidate_arr[@]}}; do
-      gql_vars+=", \$b$i: String!"
-      gql_fields+=" o$i: pullRequests(headRefName: \$b$i, states: [OPEN]) { totalCount }"
-      gql_fields+=" m$i: pullRequests(headRefName: \$b$i, states: [MERGED]) { totalCount }"
-      gql_args+=(-f "b$i=${candidate_arr[$i]}")
+    local -A tip
+    local ref oid start end i gql_vars gql_fields gql_args pr_states kind idx head
+    while read -r ref oid; do
+      tip[${ref#refs/heads/}]=$oid
+    done < <(git for-each-ref --format='%(refname) %(objectname)' refs/heads)
+
+    for (( start = 1; start <= ${#candidate_arr[@]}; start += 100 )); do
+      end=$(( start + 99 ))
+      (( end > ${#candidate_arr[@]} )) && end=${#candidate_arr[@]}
+      gql_vars="" gql_fields="" gql_args=()
+      for (( i = start; i <= end; i++ )); do
+        gql_vars+=", \$b$i: String!, \$s$i: GitObjectID!"
+        gql_fields+=" o$i: pullRequests(headRefName: \$b$i, states: [OPEN]) { totalCount }"
+        gql_fields+=" c$i: object(oid: \$s$i) { ... on Commit { associatedPullRequests(first: 50) { nodes { state headRefOid } } } }"
+        gql_args+=(-f "b$i=${candidate_arr[$i]}" -f "s$i=${tip[${candidate_arr[$i]}]}")
+      done
+      # lines: "o <index> -" (open PR by name) or "<STATE> <index> <head oid>"
+      pr_states=$(gh api graphql -F owner='{owner}' -F repo='{repo}' "${gql_args[@]}" \
+        -f query="query(\$owner: String!, \$repo: String!$gql_vars) { repository(owner: \$owner, name: \$repo) {$gql_fields } }" \
+        --jq '.data.repository | to_entries[] | .key as $k | (.value // empty) |
+          if $k[:1] == "o" then (select(.totalCount > 0) | "o \($k[1:]) -")
+          else (.associatedPullRequests.nodes[]? | "\(.state) \($k[1:]) \(.headRefOid)") end' 2>/dev/null)
+      while read -r kind idx head; do
+        case $kind in
+          o|OPEN) open_prs+="${candidate_arr[$idx]}"$'\n' ;;
+          MERGED) [[ $head == "${tip[${candidate_arr[$idx]}]}" ]] && merged_prs+="${candidate_arr[$idx]}"$'\n' ;;
+        esac
+      done <<< "$pr_states"
     done
-    # one line per (branch, state) that has PRs: "<o|m> <index>"
-    pr_states=$(gh api graphql -F owner='{owner}' -F repo='{repo}' "${gql_args[@]}" \
-      -f query="query(\$owner: String!, \$repo: String!$gql_vars) { repository(owner: \$owner, name: \$repo) {$gql_fields } }" \
-      --jq '.data.repository | to_entries[] | select(.value.totalCount > 0) | "\(.key[:1]) \(.key[1:])"' 2>/dev/null)
-    local kind idx
-    while read -r kind idx; do
-      [[ $kind == o ]] && open_prs+="${candidate_arr[$idx]}"$'\n'
-      [[ $kind == m ]] && merged_prs+="${candidate_arr[$idx]}"$'\n'
-    done <<< "$pr_states"
   fi
 
   local merged_list=() pushed_list=() unique_list=()
@@ -369,15 +387,16 @@ fnGitPrune() {
   while IFS= read -r branch; do
     [[ -z "$branch" || "$branch" == "$trunk" ]] && continue
     # live PR on this name -> active work, never delete
-    echo "$open_prs" | grep -qxF "$branch" && continue
+    # (Ie) = exact-match index in the line list, 0 if absent; no subprocess
+    (( ${${(f)open_prs}[(Ie)$branch]} )) && continue
     # merged: PR merged, or already contained in the trunk
-    if { [[ -n "$merged_prs" ]] && echo "$merged_prs" | grep -qxF "$branch"; } \
+    if (( ${${(f)merged_prs}[(Ie)$branch]} )) \
        || git merge-base --is-ancestor "$branch" "$remote_trunk" 2>/dev/null; then
       merged_list+=("$branch")
       continue
     fi
     # not merged: leave branches that still have a live remote (active work)
-    echo "$remote_branches" | grep -qxF "$branch" && continue
+    (( ${${(f)remote_branches}[(Ie)$branch]} )) && continue
     # remote gone/absent: safe only if every commit lives on some remote ref.
     # `--not --remotes` fails safe (counts everything when there are no remotes).
     unpushed=$(git rev-list --count "$branch" --not --remotes 2>/dev/null)
