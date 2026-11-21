@@ -1,2 +1,3 @@
 topics/private/**/*
 !topics/private/README.md
+topics/agent-skills/build/
