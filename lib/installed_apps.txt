@@ -1,3 +1,4 @@
+alfred
 docker
 grandperspective
 iterm2
