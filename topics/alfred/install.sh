@@ -3,7 +3,8 @@
 # Alfred
 #
 # Replaces Spotlight for quick search: ⌘Space opens Alfred, macOS Dark theme,
-# folders in results, and no web fallbacks (Google/Amazon/Wikipedia).
+# no hat logo, folders in results, no web fallbacks (Google/Amazon/Wikipedia),
+# and the calculator ignores thousands separators in what you type.
 #
 # The files under preferences/ mirror Alfred.alfredpreferences/preferences.
 # Alfred keeps per-machine settings (hotkey, theme) under local/<localhash>/,
@@ -40,9 +41,16 @@ DEST="$BUNDLE/preferences"
 echo "... writing Alfred preferences"
 osascript -e 'quit app "Alfred Preferences"' -e 'quit app "Alfred"' 2>/dev/null
 
-mkdir -p "$DEST/features" "$DEST/local/$LOCALHASH"
-cp -R "$SRC/features/" "$DEST/features/"
-cp -R "$SRC/local/" "$DEST/local/$LOCALHASH/"
+for dir in "$SRC"/*/; do
+  name=$(basename "$dir")
+  if [ "$name" = local ]; then
+    target="$DEST/local/$LOCALHASH"
+  else
+    target="$DEST/$name"
+  fi
+  mkdir -p "$target"
+  cp -R "$dir" "$target/"
+done
 
 # Give ⌘Space to Alfred: turn off Spotlight's "Show Spotlight search" (id 64)
 echo "... disabling Spotlight's ⌘Space shortcut"
