@@ -11,6 +11,9 @@
 # Out of the box iTerm eats cmd+arrow for tab switching and sends opt+arrow as
 # a sequence zsh doesn't bind. Profile key mappings win over both.
 #
+# Bootstrap sources this from zsh, where `$var:A` is a path modifier, so every
+# variable followed by `:` must be braced.
+#
 # Prefs are round-tripped through `defaults export/import` so cfprefsd stays
 # in sync. Restart iTerm to pick up the change.
 
@@ -44,13 +47,18 @@ else
     MAP=":'New Bookmarks':$i:'Keyboard Map'"
     $BUDDY -c "Add $MAP dict" "$PLIST" 2>/dev/null
 
+    # drop junk keys left by the old unbraced `$key:Action` (zsh :A modifier)
+    $BUDDY -c "Print $MAP" "$PLIST" 2>/dev/null \
+      | sed -n 's/^    \(\/[^ ]*\) = .*/\1/p' \
+      | while read -r junk; do $BUDDY -c "Delete ${MAP}:${junk}" "$PLIST"; done
+
     for mapping in "${MAPPINGS[@]}"; do
       IFS='|' read -r key action text <<< "$mapping"
-      $BUDDY -c "Delete $MAP:$key" "$PLIST" 2>/dev/null
+      $BUDDY -c "Delete ${MAP}:${key}" "$PLIST" 2>/dev/null
       $BUDDY \
-        -c "Add $MAP:$key dict" \
-        -c "Add $MAP:$key:Action integer $action" \
-        -c "Add $MAP:$key:Text string $text" \
+        -c "Add ${MAP}:${key} dict" \
+        -c "Add ${MAP}:${key}:Action integer ${action}" \
+        -c "Add ${MAP}:${key}:Text string ${text}" \
         "$PLIST"
     done
 
