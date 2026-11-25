@@ -16,7 +16,11 @@
     editor = vim
     excludesfile = ~/.gitignore
     untrackedCache = true
-    fsmonitor = true
+    # Off by default: each repo gets a daemon that never exits, and tests
+    # creating throwaway repos leaked 100+ of them. Only huge repos benefit
+    # (a 5k-file repo's `git status` is 0.03s without it). Opt one in from
+    # inside it with `git config core.fsmonitor true` (stored in its .git/config).
+    fsmonitor = false
 [apply]
     whitespace = nowarn
 [mergetool]
